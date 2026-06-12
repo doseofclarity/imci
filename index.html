@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>IMCI – Integrated Management of Childhood Illnesses | PHN Review</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        .transition-all { transition: all 0.3s ease; }
+        .recall-mode .reveal-text {
+            background-color: #cbd5e1;
+            color: transparent;
+            border-radius: 0.375rem;
+            padding: 0 0.25rem;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+            box-shadow: inset 0 0 0 1px #94a3b8;
+        }
+        .recall-mode .reveal-text:hover,
+        .recall-mode .reveal-text.revealed {
+            background-color: #fde047;
+            color: #1e293b;
+            box-shadow: none;
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #0ea5e9; border-radius: 8px; }
+        .content-section { animation: fade 0.3s ease; }
+        @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .locked-section { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+        .quiz-feedback-correct { background-color: #dcfce7; border-left: 4px solid #22c55e; }
+        .quiz-feedback-wrong { background-color: #fee2e2; border-left: 4px solid #ef4444; }
+    </style>
+</head>
+<body class="bg-slate-50 h-screen flex flex-col md:flex-row font-sans text-slate-800 overflow-hidden">
+
+    <!-- Mobile header -->
+    <div class="md:hidden bg-slate-800 text-white p-4 flex justify-between items-center shadow-md z-30 shrink-0">
+        <button onclick="toggleMobileMenu()" class="text-white focus:outline-none z-40">
+            <i class="fa-solid fa-bars text-2xl"></i>
+        </button>
+        <h1 class="font-bold text-lg absolute left-1/2 transform -translate-x-1/2 pointer-events-none">
+            <i class="fa-solid fa-child mr-2 text-sky-300"></i> IMCI Review
+        </h1>
+        <div class="w-8"></div>
+    </div>
+
+    <!-- Sidebar navigation -->
+    <nav id="sidebar" class="hidden md:flex flex-col w-full md:w-80 bg-white shadow-2xl h-full absolute md:relative z-30 transition-transform duration-300 shrink-0 border-r border-slate-200">
+        <div class="p-6 bg-gradient-to-br from-slate-800 to-slate-700 text-white hidden md:block shrink-0">
+            <h1 class="font-black text-2xl tracking-wide"><i class="fa-solid fa-child text-sky-300 mr-2"></i> IMCI</h1>
+            <p class="text-sm text-slate-300 mt-1 font-medium">Integrated Management of Childhood Illnesses</p>
+        </div>
+        <div class="flex-1 overflow-y-auto py-4">
+            <ul class="space-y-1 text-sm font-medium">
+                <li><button onclick="showSection('home')" id="btn-home" class="nav-btn w-full text-left px-6 py-3 bg-slate-100 text-slate-800 border-r-4 border-slate-800 transition-colors"><i class="fa-solid fa-house w-6 nav-icon"></i><i class="fa-solid fa-lock w-6 hidden text-slate-400"></i> Home / Start</button></li>
+                <li><button onclick="showSection('overview')" id="btn-overview" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-chart-line w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> 1. Epidemiology & Overview</button></li>
+                <li><button onclick="showSection('danger')" id="btn-danger" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-triangle-exclamation w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> 2. Danger Signs & Assessment</button></li>
+                <li><button onclick="showSection('classification')" id="btn-classification" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-chart-simple w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> 3. Classification (Color Coding)</button></li>
+                <li><button onclick="showSection('cough')" id="btn-cough" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-lungs w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> 4. Cough / Difficult Breathing</button></li>
+                <li><button onclick="showSection('diarrhea')" id="btn-diarrhea" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-toilet w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> 5. Diarrhea & Dehydration</button></li>
+                <li><button onclick="showSection('fever')" id="btn-fever" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-temperature-high w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> 6. Fever & Measles</button></li>
+                <li><button onclick="showSection('ear')" id="btn-ear" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-ear-deaf w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> 7. Ear Problems</button></li>
+                <li><button onclick="showSection('malnutrition')" id="btn-malnutrition" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-apple-alt w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> 8. Malnutrition & Anemia</button></li>
+                <li><button onclick="showSection('phn')" id="btn-phn" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-user-nurse w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> 9. PHN Role & Nursing Care</button></li>
+                <li><button onclick="showSection('mnemonics')" id="btn-mnemonics" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors border-t border-slate-200 mt-2 locked-section"><i class="fa-solid fa-brain w-6 text-amber-500 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> Mnemonic Appendix</button></li>
+                <li><button onclick="showSection('final_quiz_sec')" id="btn-final_quiz_sec" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-graduation-cap w-6 text-green-600 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> Final 50‑Item Exam</button></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="flex-1 h-full overflow-y-auto bg-slate-100 relative w-full">
+        <div class="fixed top-16 md:top-4 right-4 md:right-8 z-40 flex items-center bg-white/90 backdrop-blur px-4 py-3 rounded-full shadow-lg border border-slate-200 cursor-pointer hover:bg-slate-50 transition-colors" onclick="toggleRecallMode()">
+            <span class="mr-3 text-sm font-bold text-slate-700 hidden md:inline"><i class="fa-solid fa-brain text-sky-600 mr-1"></i> Active Recall</span>
+            <span class="mr-3 text-sm font-bold text-slate-700 md:hidden"><i class="fa-solid fa-brain text-sky-600"></i></span>
+            <button id="recall-toggle" class="w-12 h-6 bg-slate-300 rounded-full relative transition-colors duration-300 focus:outline-none shadow-inner pointer-events-none">
+                <div id="recall-knob" class="w-5 h-5 bg-white rounded-full absolute top-0.5 left-0.5 transition-transform duration-300 shadow"></div>
+            </button>
+        </div>
+
+        <div class="p-4 md:p-8 max-w-6xl mx-auto pb-32">
+
+            <!-- HOME SECTION -->
+            <section id="home" class="content-section flex flex-col items-center justify-center min-h-[80vh] text-center block">
+                <div class="bg-gradient-to-br from-slate-800 to-slate-700 text-white rounded-3xl shadow-2xl p-10 md:p-16 w-full relative overflow-hidden">
+                    <div class="absolute top-0 right-0 -mt-10 -mr-10 text-white opacity-5 pointer-events-none"><i class="fa-solid fa-child text-[20rem]"></i></div>
+                    <div class="relative z-10">
+                        <div class="bg-white/10 backdrop-blur-sm inline-block p-4 rounded-full text-sky-300 mb-6 shadow-sm border border-white/20">
+                            <i class="fa-solid fa-stethoscope text-5xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-300 mb-2 uppercase tracking-widest">IMCI Study Module</h3>
+                        <h1 class="text-4xl md:text-6xl font-black text-white mb-6 leading-tight drop-shadow-md">Integrated Management of Childhood Illnesses</h1>
+                        <div class="bg-white/10 backdrop-blur inline-block px-6 py-3 rounded-full mb-10 border border-white/20">
+                            <p class="text-lg text-white font-medium">For sick children aged 2 months – 5 years</p>
+                        </div>
+                        <button onclick="unlockFirstSection()" class="bg-sky-600 hover:bg-sky-500 text-white font-black py-4 px-10 rounded-full shadow-xl transition-transform hover:scale-105 text-lg flex items-center mx-auto focus:outline-none">
+                            Begin Lecture <i class="fa-solid fa-arrow-right ml-3"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 1: Epidemiology & Overview -->
+            <section id="overview" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-sky-500 pb-3"><i class="fa-solid fa-chart-line text-sky-500 mr-4"></i> Epidemiology & Overview</h2>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-slate-50 p-5 rounded-xl">
+                            <h3 class="font-bold text-lg mb-2">Top Causes of Mortality</h3>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li><strong>Newborns:</strong> Pneumonia (2/1,000 LB), Bacterial sepsis (1.8/1,000)</li>
+                                <li><strong>0-4 years:</strong> Pneumonia (37.76/100k), Accidents (17.63/100k)</li>
+                                <li><strong>5-9 years:</strong> Accidents, Pneumonia, Malignant neoplasms</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-xl">
+                            <h3 class="font-bold text-lg mb-2">Population Estimates</h3>
+                            <p>0-4 years: ~10 million children<br>5-10 years: ~10 million children<br>Newborns: first month of life</p>
+                            <p class="mt-3"><strong>IMCI goal:</strong> Reduce morbidity & mortality in children <5 years.</p>
+                        </div>
+                    </div>
+                    <button onclick="openQuiz('overview')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors flex items-center justify-center text-lg"><i class="fa-solid fa-list-check mr-3 text-2xl text-sky-400"></i> Take Quiz to Unlock Next Section</button>
+                </div>
+            </section>
+
+            <!-- SECTION 2: Danger Signs & Assessment -->
+            <section id="danger" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-sky-500 pb-3"><i class="fa-solid fa-triangle-exclamation text-sky-500 mr-4"></i> General Danger Signs (ANY ONE = VERY SEVERE DISEASE)</h2>
+                    <div class="grid md:grid-cols-2 gap-5">
+                        <div class="bg-red-50 p-4 rounded-xl border-l-4 border-red-500"><span class="font-bold">🔴 Unable to drink/breastfeed</span> – child cannot suck or swallow when offered.</div>
+                        <div class="bg-red-50 p-4 rounded-xl border-l-4 border-red-500"><span class="font-bold">🔴 Vomits everything</span> – cannot hold down any food/fluids/medicine.</div>
+                        <div class="bg-red-50 p-4 rounded-xl border-l-4 border-red-500"><span class="font-bold">🔴 Convulsions</span> – stiff arms/legs, loss of consciousness.</div>
+                        <div class="bg-red-50 p-4 rounded-xl border-l-4 border-red-500"><span class="font-bold">🔴 Lethargic or unconscious</span> – unusually sleepy, hard to wake, or cannot be wakened.</div>
+                    </div>
+                    <div class="mt-6 bg-slate-100 p-4 rounded-xl">
+                        <p><strong>Assessment steps:</strong> Ask problem → check danger signs → ask 4 main symptoms (cough, diarrhea, fever, ear) → check nutrition/immunization → assess other problems.</p>
+                    </div>
+                    <button onclick="openQuiz('danger')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors flex items-center justify-center text-lg"><i class="fa-solid fa-list-check mr-3 text-2xl text-sky-400"></i> Take Quiz to Unlock Next Section</button>
+                </div>
+            </section>
+
+            <!-- SECTION 3: Classification (Color Coding) -->
+            <section id="classification" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-sky-500 pb-3"><i class="fa-solid fa-chart-simple text-sky-500 mr-4"></i> Color‑Coded Classification</h2>
+                    <div class="grid md:grid-cols-3 gap-4 text-center">
+                        <div class="bg-green-100 p-4 rounded-xl border border-green-300"><span class="font-black text-green-800 text-2xl">🟢 GREEN</span><br>Mild → Home care</div>
+                        <div class="bg-yellow-100 p-4 rounded-xl border border-yellow-300"><span class="font-black text-yellow-800 text-2xl">🟡 YELLOW</span><br>Moderate → RHU management</div>
+                        <div class="bg-pink-100 p-4 rounded-xl border border-pink-300"><span class="font-black text-pink-800 text-2xl">🔴 PINK</span><br>Severe → Urgent hospital referral</div>
+                    </div>
+                    <p class="mt-4 text-sm text-slate-600">⚠️ If a child has 1 PINK + 1 YELLOW, treat as PINK (urgent referral). Exception: Dehydration requires 2 or more signs for severe classification.</p>
+                    <button onclick="openQuiz('classification')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors flex items-center justify-center text-lg"><i class="fa-solid fa-list-check mr-3 text-2xl text-sky-400"></i> Take Quiz to Unlock Next Section</button>
+                </div>
+            </section>
+
+            <!-- SECTION 4: Cough / Difficult Breathing -->
+            <section id="cough" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-sky-500 pb-3"><i class="fa-solid fa-lungs text-sky-500 mr-4"></i> Cough or Difficult Breathing</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm border-collapse">
+                            <thead class="bg-slate-800 text-white"><tr><th class="p-2">Signs</th><th class="p-2">Classify as</th><th class="p-2">Treatment</th></tr></thead>
+                            <tbody class="divide-y">
+                                <tr class="bg-pink-50"><td class="p-2">Danger sign OR chest indrawing OR stridor in calm child</td><td class="font-bold">Severe pneumonia / very severe disease</td><td>1st dose antibiotic, URGENT refer</td></tr>
+                                <tr class="bg-yellow-50"><td class="p-2">Fast breathing only: 2-12 mo ≥50/min; 12-59 mo ≥40/min</td><td class="font-bold">Pneumonia</td><td>Oral antibiotic 5 days, follow-up 2 days</td></tr>
+                                <tr class="bg-green-50"><td class="p-2">No signs of pneumonia/very severe</td><td class="font-bold">No pneumonia: cough or cold</td><td>Home care, follow-up 5 days if not improving</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-4 bg-amber-50 p-3 rounded"><strong>💡 Chronic cough >30 days</strong> → consider TB, asthma, whooping cough → refer.</div>
+                    <button onclick="openQuiz('cough')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors flex items-center justify-center text-lg"><i class="fa-solid fa-list-check mr-3 text-2xl text-sky-400"></i> Take Quiz to Unlock Next Section</button>
+                </div>
+            </section>
+
+            <!-- SECTION 5: Diarrhea & Dehydration -->
+            <section id="diarrhea" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-sky-500 pb-3"><i class="fa-solid fa-toilet text-sky-500 mr-4"></i> Diarrhea & Dehydration Assessment</h2>
+                    <div class="grid md:grid-cols-2 gap-5">
+                        <div><h3 class="font-bold">Dehydration signs (2 or more = severe)</h3><ul class="list-disc pl-5"><li>Restless/irritable vs lethargic/unconscious</li><li>Sunken eyes</li><li>Drinks eagerly / poorly / not able</li><li>Skin pinch: slow or very slow (>2 sec)</li></ul></div>
+                        <div><h3 class="font-bold">Classification</h3><ul class="list-disc pl-5"><li><strong>Severe dehydration</strong> (pink) → IV fluids, urgent referral</li><li><strong>Some dehydration</strong> (yellow) → Plan B (ORS + continue feeding)</li><li><strong>No dehydration</strong> (green) → home care, extra fluids</li></ul></div>
+                    </div>
+                    <div class="mt-4 bg-indigo-50 p-3 rounded"><strong>📌 Persistent diarrhea ≥14 days</strong> → special feeding; refer if severe. <strong>Dysentery (blood in stool)</strong> → antibiotics + dehydration management.</div>
+                    <button onclick="openQuiz('diarrhea')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors flex items-center justify-center text-lg"><i class="fa-solid fa-list-check mr-3 text-2xl text-sky-400"></i> Take Quiz to Unlock Next Section</button>
+                </div>
+            </section>
+
+            <!-- SECTION 6: Fever & Measles -->
+            <section id="fever" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-sky-500 pb-3"><i class="fa-solid fa-temperature-high text-sky-500 mr-4"></i> Fever (≥37.5°C) & Measles</h2>
+                    <p><strong>Fever >7 days</strong> → consider typhoid or severe disease. Check for stiff neck (meningitis → very severe).</p>
+                    <p><strong>Measles:</strong> generalized rash + cough/runny nose/red eyes. Complications: mouth ulcers, pus draining eyes, corneal clouding → give Vitamin A.</p>
+                    <div class="bg-amber-50 p-3 rounded mt-3"><strong>Malaria risk:</strong> high/ low/ no risk areas. Runny nose makes malaria unlikely in low/no risk areas.</div>
+                    <button onclick="openQuiz('fever')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors flex items-center justify-center text-lg"><i class="fa-solid fa-list-check mr-3 text-2xl text-sky-400"></i> Take Quiz to Unlock Next Section</button>
+                </div>
+            </section>
+
+            <!-- SECTION 7: Ear Problems -->
+            <section id="ear" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-sky-500 pb-3"><i class="fa-solid fa-ear-deaf text-sky-500 mr-4"></i> Ear Problem</h2>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li><strong>Tender swelling behind ear (mastoiditis)</strong> → URGENT referral, give antibiotic & paracetamol.</li>
+                        <li><strong>Pus draining <14 days or ear pain</strong> → acute ear infection → oral antibiotic 5 days + pain relief + dry ear.</li>
+                        <li><strong>Pus draining ≥14 days</strong> → chronic ear infection → dry ear only, follow-up 5 days.</li>
+                        <li><strong>No ear pain, no pus</strong> → no ear infection.</li>
+                    </ul>
+                    <button onclick="openQuiz('ear')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors flex items-center justify-center text-lg"><i class="fa-solid fa-list-check mr-3 text-2xl text-sky-400"></i> Take Quiz to Unlock Next Section</button>
+                </div>
+            </section>
+
+            <!-- SECTION 8: Malnutrition & Anemia -->
+            <section id="malnutrition" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-sky-500 pb-3"><i class="fa-solid fa-apple-alt text-sky-500 mr-4"></i> Malnutrition & Anemia</h2>
+                    <p><strong>Look for:</strong> visible severe wasting (marasmus), palmar pallor (anemia), edema of both feet (kwashiorkor).<br>
+                    <strong>Measure weight for age:</strong> below bottom curve = very low weight.</p>
+                    <div class="bg-slate-100 p-3 rounded mt-2"><strong>Iron supplementation duration:</strong> 3 months; follow‑up at 14 days for pallor.</div>
+                    <button onclick="openQuiz('malnutrition')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors flex items-center justify-center text-lg"><i class="fa-solid fa-list-check mr-3 text-2xl text-sky-400"></i> Take Quiz to Unlock Next Section</button>
+                </div>
+            </section>
+
+            <!-- SECTION 9: PHN Role & Nursing Care -->
+            <section id="phn" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-sky-500 pb-3"><i class="fa-solid fa-user-nurse text-sky-500 mr-4"></i> PHN Role in IMCI</h2>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li>Assess children for danger signs, fast breathing, chest indrawing, stridor.</li>
+                        <li>Classify illness using color‑coded tables (green/yellow/pink).</li>
+                        <li>Provide home care (ORS, antibiotics, feeding advice) for green/yellow.</li>
+                        <li>Refer pink cases urgently; give pre‑referral treatment (first dose antibiotic, vitamin A).</li>
+                        <li>Counsel caretakers on when to return, feeding during illness, and follow‑up schedules.</li>
+                        <li>Maintain IMCI recording forms and coordinate with RHU/hospital.</li>
+                    </ul>
+                    <button onclick="openQuiz('phn')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors flex items-center justify-center text-lg"><i class="fa-solid fa-list-check mr-3 text-2xl text-sky-400"></i> Take Quiz to Unlock Next Section</button>
+                </div>
+            </section>
+
+            <!-- SECTION 10: Mnemonics -->
+            <section id="mnemonics" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-sky-500 pb-3"><i class="fa-solid fa-brain text-sky-500 mr-4"></i> Mnemonics for IMCI</h2>
+                    <table class="w-full text-sm border-collapse border">
+                        <thead class="bg-slate-800 text-white"><tr><th class="p-2">Topic</th><th class="p-2">Mnemonic</th><th class="p-2">Meaning</th></tr></thead>
+                        <tbody>
+                            <tr><td class="p-2">General Danger Signs</td><td class="font-bold">UVLC</td><td class="reveal-text">Unable to drink, Vomits everything, Lethargic, Convulsions</td></tr>
+                            <tr class="bg-slate-50"><td>Fast breathing thresholds</td><td class="font-bold">2-12 mo ≥50; 12-59 mo ≥40</td><td class="reveal-text">"50 for 2‑12 months, 40 for 1‑5 years"</td></tr>
+                            <tr><td>Pink (severe) conditions</td><td class="font-bold">DANGER</td><td class="reveal-text">Dehydration (severe), Any danger sign, Not able to drink, General danger sign, Ear (mastoiditis), Respiratory (stridor/indrawing)</td></tr>
+                            <tr class="bg-slate-50"><td>Some dehydration signs</td><td class="font-bold">SUNKEN + SLOW PINCH</td><td class="reveal-text">Sunken eyes, Skin pinch goes back slowly, Drinks eagerly/thirsty</td></tr>
+                        </tbody>
+                    </table>
+                    <button onclick="openQuiz('final_quiz')" class="mt-8 w-full bg-amber-500 text-slate-900 font-black py-4 rounded-xl shadow-md hover:bg-amber-400 transition-colors text-lg"><i class="fa-solid fa-graduation-cap mr-3"></i> Take Final 50‑Item Exam</button>
+                </div>
+            </section>
+
+            <!-- FINAL QUIZ SECTION -->
+            <section id="final_quiz_sec" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 text-center min-h-[60vh] flex flex-col justify-center items-center">
+                    <i class="fa-solid fa-graduation-cap text-8xl text-amber-400 mb-6"></i>
+                    <h2 class="text-4xl font-black text-slate-800 mb-4">IMCI Final Comprehensive Exam</h2>
+                    <p class="text-lg text-slate-600 mb-8 max-w-2xl">50 items covering all IMCI modules. Score ≥75% to pass.</p>
+                    <button onclick="openQuiz('final_quiz')" class="w-full max-w-md bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors text-xl">Start Final Exam</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Quiz Modal -->
+    <div id="quiz-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4">
+        <div class="bg-white w-full max-w-3xl rounded-2xl shadow-2xl p-6 md:p-8 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeQuiz()" class="absolute top-4 right-4 text-slate-400 hover:text-red-500"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            <h2 id="quiz-title" class="text-3xl font-black text-slate-800 mb-2"></h2>
+            <p class="text-slate-600 mb-6 font-medium border-b pb-4">Score ≥75% to unlock next section.</p>
+            <div id="quiz-questions-container" class="space-y-4"></div>
+            <button id="quiz-submit-btn" onclick="submitQuiz()" class="mt-8 w-full bg-sky-600 text-white font-bold py-4 rounded-xl hover:bg-sky-700 transition-colors shadow-lg text-lg">Submit Answers</button>
+            <div id="quiz-result-container" class="hidden mt-6 p-4 rounded-xl bg-slate-100 border"></div>
+        </div>
+    </div>
+
+    <script>
+        // ---------------------- QUIZ DATA --------------------------
+        const quizzes = {
+            overview: { title: 'IMCI: Epidemiology & Overview', next: 'danger', questions: [
+                { q: "What is the leading cause of mortality in children 0-4 years in the Philippines?", options: ["Accidents", "Pneumonia", "Malaria", "Diarrhea"], ans: 1 },
+                { q: "Newborn mortality rate is highest for which condition?", options: ["Sepsis", "Pneumonia", "Birth asphyxia", "Tetanus"], ans: 1 },
+                { q: "IMCI is designed for children aged?", options: ["Birth to 1 year", "2 months to 5 years", "0-12 months", "1-10 years"], ans: 1 },
+                { q: "Which age group has ~10 million children in the Philippines?", options: ["0-4 years", "5-9 years", "Both A and B", "Adolescents"], ans: 2 },
+                { q: "The top cause of death in children 5-9 years is?", options: ["Pneumonia", "Accidents", "Malaria", "Measles"], ans: 1 }
+            ] },
+            danger: { title: 'General Danger Signs', next: 'classification', questions: [
+                { q: "Which is NOT a general danger sign?", options: ["Unable to drink", "Vomits everything", "Mild fever", "Lethargy"], ans: 2 },
+                { q: "A child who cannot be wakened is classified as?", options: ["Unconscious", "Lethargic", "Severe dehydration", "Malaria"], ans: 0 },
+                { q: "If a child has convulsions, you should:", options: ["Give oral rehydration", "Treat as very severe disease", "Send home", "Give antibiotics only"], ans: 1 },
+                { q: "The first step in IMCI assessment is?", options: ["Check immunization", "Ask about the problem", "Count breathing", "Check for pallor"], ans: 1 },
+                { q: "A child who vomits everything cannot hold down:", options: ["Food only", "Fluids only", "Food, fluids, or oral medicine", "Only medicine"], ans: 2 }
+            ] },
+            classification: { title: 'Color Coding & Classification', next: 'cough', questions: [
+                { q: "Green classification means:", options: ["Urgent referral", "RHU management", "Home care", "Hospitalization"], ans: 2 },
+                { q: "Pink classification requires:", options: ["Follow-up in 5 days", "Urgent hospital referral", "ORS at home", "Antibiotics only"], ans: 1 },
+                { q: "Which classification is for moderate severity?", options: ["Green", "Yellow", "Pink", "Blue"], ans: 1 },
+                { q: "If a child has one pink and one yellow, the nurse should:", options: ["Treat as yellow", "Treat as pink", "Wait and see", "Refer to traditional healer"], ans: 1 },
+                { q: "Severe dehydration is classified as which color?", options: ["Green", "Yellow", "Pink", "Orange"], ans: 2 }
+            ] },
+            cough: { title: 'Cough / Difficult Breathing', next: 'diarrhea', questions: [
+                { q: "Fast breathing for a 10-month-old infant is ≥ ___ breaths/min.", options: ["40", "50", "60", "30"], ans: 1 },
+                { q: "For a child 3 years old, fast breathing is ≥ ___ breaths/min.", options: ["30", "40", "50", "60"], ans: 1 },
+                { q: "Chest indrawing indicates:", options: ["Mild cold", "Severe pneumonia", "No danger", "Malaria"], ans: 1 },
+                { q: "Stridor in a calm child is a sign of:", options: ["Common cold", "Life-threatening airway obstruction", "Asthma", "Bronchiolitis"], ans: 1 },
+                { q: "A child with fast breathing but no chest indrawing is classified as:", options: ["Severe pneumonia", "Pneumonia", "No pneumonia", "Very severe disease"], ans: 1 }
+            ] },
+            diarrhea: { title: 'Diarrhea & Dehydration', next: 'fever', questions: [
+                { q: "Two or more of which signs indicate severe dehydration?", options: ["Fever, cough", "Sunken eyes, slow skin pinch, drinking poorly", "Rash, conjunctivitis", "Fast breathing, wheezing"], ans: 1 },
+                { q: "Plan B (ORS + continued feeding) is for:", options: ["Severe dehydration", "Some dehydration", "No dehydration", "Dysentery only"], ans: 1 },
+                { q: "Persistent diarrhea is defined as lasting ≥ ___ days.", options: ["7", "10", "14", "21"], ans: 2 },
+                { q: "Dysentery is characterized by:", options: ["Watery stool", "Blood in stool", "White stool", "Green stool"], ans: 1 },
+                { q: "A child who is lethargic, has sunken eyes, and cannot drink is:", options: ["No dehydration", "Some dehydration", "Severe dehydration", "Healthy"], ans: 2 }
+            ] },
+            fever: { title: 'Fever & Measles', next: 'ear', questions: [
+                { q: "Fever lasting more than 7 days suggests:", options: ["Common cold", "Typhoid or severe disease", "Malaria", "Allergy"], ans: 1 },
+                { q: "Stiff neck in a febrile child indicates possible:", options: ["Meningitis", "Pneumonia", "Diarrhea", "Otitis media"], ans: 0 },
+                { q: "Measles rash appears with which symptoms?", options: ["Cough, runny nose, red eyes", "Jaundice", "Swollen joints", "Bleeding"], ans: 0 },
+                { q: "Complication of measles requiring urgent Vitamin A includes:", options: ["Diarrhea", "Corneal clouding", "Fever", "Rash"], ans: 1 },
+                { q: "Runny nose in a low malaria risk area makes malaria:", options: ["Very likely", "Unlikely", "Certain", "No effect"], ans: 1 }
+            ] },
+            ear: { title: 'Ear Problems', next: 'malnutrition', questions: [
+                { q: "Mastoiditis presents with:", options: ["Ear discharge only", "Tender swelling behind the ear", "Itching", "Fever without ear pain"], ans: 1 },
+                { q: "Acute ear infection (<14 days pus or ear pain) is treated with:", options: ["Only ear drying", "Oral antibiotic + pain relief", "IV antibiotics", "No treatment"], ans: 1 },
+                { q: "Chronic ear infection (≥14 days discharge) requires:", options: ["Oral antibiotics", "Urgent referral", "Ear drying and follow-up", "Surgery immediately"], ans: 2 },
+                { q: "Mastoiditis requires:", options: ["Home care", "Urgent referral", "ORS", "Vitamin A"], ans: 1 },
+                { q: "Ear infection is a common cause of:", options: ["Hearing loss", "Blindness", "Anemia", "Rickets"], ans: 0 }
+            ] },
+            malnutrition: { title: 'Malnutrition & Anemia', next: 'phn', questions: [
+                { q: "Visible severe wasting is characteristic of:", options: ["Kwashiorkor", "Marasmus", "Anemia", "Vitamin A deficiency"], ans: 1 },
+                { q: "Bilateral edema of feet suggests:", options: ["Marasmus", "Kwashiorkor", "Dehydration", "Infection"], ans: 1 },
+                { q: "Palmar pallor indicates:", options: ["Jaundice", "Anemia", "Dehydration", "Malaria"], ans: 1 },
+                { q: "Iron supplementation for anemia is given for how many months?", options: ["1 month", "2 months", "3 months", "6 months"], ans: 2 },
+                { q: "Very low weight for age is defined as:", options: ["Below 3rd percentile", "Below bottom curve on weight-for-age chart", "Below 50th percentile", "Below 5 kg"], ans: 1 }
+            ] },
+            phn: { title: 'PHN Role in IMCI', next: 'mnemonics', questions: [
+                { q: "A child with chest indrawing and no danger sign should be?", options: ["Given ORS", "Referred urgently", "Sent home with antibiotics", "Given Vitamin A"], ans: 1 },
+                { q: "Pre-referral treatment for severe pneumonia includes:", options: ["First dose antibiotic", "ORS", "Zinc", "Iron"], ans: 0 },
+                { q: "The PHN should counsel caretakers on:", options: ["When to return", "Feeding during illness", "Follow-up schedule", "All of the above"], ans: 3 },
+                { q: "Which classification requires home care?", options: ["Pink", "Yellow", "Green", "Blue"], ans: 2 },
+                { q: "A follow-up visit for pneumonia should be scheduled in:", options: ["2 days", "5 days", "7 days", "14 days"], ans: 0 }
+            ] }
+        };
+
+        // Build final quiz (50 items)
+        let finalQ = [];
+        for (let sec of ['overview','danger','classification','cough','diarrhea','fever','ear','malnutrition','phn']) {
+            finalQ = finalQ.concat(quizzes[sec].questions.slice(0,6));
+        }
+        while(finalQ.length < 50) finalQ.push({ q: "What is the fast breathing threshold for a 2-year-old child?", options: ["≥30/min", "≥40/min", "≥50/min", "≥60/min"], ans: 1 });
+        quizzes['final_quiz'] = { title: 'IMCI Final 50‑Item Exam', next: null, questions: finalQ };
+
+        // ---------------------- State management --------------------------
+        let unlockedSections = ['home'];
+        function unlockFirstSection() { if(!unlockedSections.includes('overview')) { unlockedSections.push('overview'); updateSidebarUI(); } showSection('overview'); }
+        function showSection(sectionId) {
+            if (!unlockedSections.includes(sectionId) && sectionId !== 'home') { alert("Please pass the Active Recall Quiz at the bottom of the previous section to unlock this content."); return; }
+            document.querySelectorAll('.content-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(sectionId)?.classList.remove('hidden');
+            document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('bg-slate-100','text-slate-800','border-r-4','border-slate-800'); btn.classList.add('text-slate-600'); });
+            const activeBtn = document.getElementById('btn-'+sectionId);
+            if(activeBtn) { activeBtn.classList.remove('text-slate-600'); activeBtn.classList.add('bg-slate-100','text-slate-800','border-r-4','border-slate-800'); }
+            if(window.innerWidth < 768) document.getElementById('sidebar').classList.add('hidden');
+            document.querySelector('main').scrollTop = 0;
+        }
+        function updateSidebarUI() {
+            const sections = ['home','overview','danger','classification','cough','diarrhea','fever','ear','malnutrition','phn','mnemonics','final_quiz_sec'];
+            sections.forEach(sec => {
+                const btn = document.getElementById('btn-'+sec);
+                if(!btn) return;
+                const lockIcon = btn.querySelector('.fa-lock'), mainIcon = btn.querySelector('.nav-icon');
+                if(unlockedSections.includes(sec) || sec==='home') { btn.classList.remove('locked-section'); if(lockIcon) lockIcon.classList.add('hidden'); if(mainIcon) mainIcon.classList.remove('hidden'); }
+                else { btn.classList.add('locked-section'); if(lockIcon) lockIcon.classList.remove('hidden'); if(mainIcon) mainIcon.classList.add('hidden'); }
+            });
+        }
+        let currentQuiz = null;
+        function openQuiz(sectionId) {
+            currentQuiz = sectionId;
+            const qd = quizzes[sectionId];
+            if(!qd) return;
+            document.getElementById('quiz-title').innerText = qd.title;
+            const container = document.getElementById('quiz-questions-container');
+            container.innerHTML = '';
+            qd.questions.forEach((q, idx) => {
+                let html = `<div class="bg-slate-50 p-4 rounded-xl border mb-4" id="quiz-q-${idx}">
+                    <p class="font-bold mb-3">${idx+1}. ${q.q}</p>
+                    <div class="space-y-2" data-qidx="${idx}">`;
+                q.options.forEach((opt, oi) => {
+                    html += `<label class="flex items-center space-x-3 p-2 rounded-lg hover:bg-white cursor-pointer">
+                        <input type="radio" name="q${idx}" value="${oi}" class="form-radio text-sky-600">
+                        <span>${opt}</span>
+                    </label>`;
+                });
+                html += `</div><div class="feedback-${idx} text-sm mt-2 hidden"></div></div>`;
+                container.innerHTML += html;
+            });
+            document.getElementById('quiz-submit-btn').classList.remove('hidden');
+            document.getElementById('quiz-result-container').classList.add('hidden');
+            document.getElementById('quiz-modal').classList.remove('hidden');
+        }
+        function closeQuiz() { document.getElementById('quiz-modal').classList.add('hidden'); }
+        function submitQuiz() {
+            const qd = quizzes[currentQuiz];
+            if(!qd) return;
+            let score = 0;
+            for(let i=0; i<qd.questions.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                const isCorrect = (selected && parseInt(selected.value) === qd.questions[i].ans);
+                if(isCorrect) score++;
+                const feedbackDiv = document.querySelector(`.feedback-${i}`);
+                if(feedbackDiv) {
+                    feedbackDiv.classList.remove('hidden');
+                    const correctAnswerText = qd.questions[i].options[qd.questions[i].ans];
+                    if(isCorrect) {
+                        feedbackDiv.innerHTML = `<span class="text-green-700"><i class="fa-solid fa-check-circle mr-1"></i> Correct!</span>`;
+                        feedbackDiv.parentElement?.classList.add('quiz-feedback-correct');
+                        feedbackDiv.parentElement?.classList.remove('quiz-feedback-wrong');
+                    } else {
+                        const selectedText = selected ? qd.questions[i].options[parseInt(selected.value)] : "No answer";
+                        feedbackDiv.innerHTML = `<span class="text-red-700"><i class="fa-solid fa-times-circle mr-1"></i> Incorrect. Correct: <strong>${correctAnswerText}</strong>. Your answer: ${selectedText}</span>`;
+                        feedbackDiv.parentElement?.classList.add('quiz-feedback-wrong');
+                        feedbackDiv.parentElement?.classList.remove('quiz-feedback-correct');
+                    }
+                }
+            }
+            const percent = (score/qd.questions.length)*100;
+            const resultDiv = document.getElementById('quiz-result-container');
+            const btn = document.getElementById('quiz-submit-btn');
+            btn.classList.add('hidden');
+            resultDiv.classList.remove('hidden');
+            if(percent >= 75) {
+                if(currentQuiz === 'final_quiz') {
+                    resultDiv.innerHTML = `<div class="text-amber-500 text-6xl mb-4 text-center">🏆</div><h3 class="text-2xl font-black text-center">Excellent!</h3><p class="text-center">Score ${score}/${qd.questions.length} (${percent}%)</p><p class="mt-2 text-center text-green-700">You mastered IMCI!</p><button onclick="closeQuiz()" class="mt-4 w-full bg-slate-800 text-white py-2 rounded-lg">Close</button>`;
+                    return;
+                }
+                if(qd.next && !unlockedSections.includes(qd.next)) { unlockedSections.push(qd.next); if(qd.next === 'mnemonics') unlockedSections.push('final_quiz_sec'); updateSidebarUI(); }
+                resultDiv.innerHTML = `<div class="text-green-600 text-5xl mb-4 text-center">✓</div><h3 class="text-2xl font-black text-center">Passed!</h3><p class="text-center">Score ${score}/${qd.questions.length} (${percent}%)</p><button onclick="closeQuiz(); showSection('${qd.next}')" class="mt-4 w-full bg-green-600 text-white py-2 rounded-lg">Unlock Next Section</button>`;
+            } else {
+                resultDiv.innerHTML = `<div class="text-red-500 text-5xl mb-4 text-center">✗</div><h3 class="text-2xl font-black text-center">Failed</h3><p class="text-center">Score ${score}/${qd.questions.length} (${percent}%) – need 75%.</p><button onclick="openQuiz('${currentQuiz}')" class="mt-4 w-full bg-slate-600 text-white py-2 rounded-lg">Try Again</button>`;
+            }
+        }
+        function toggleRecallMode() {
+            const active = !document.body.classList.contains('recall-mode');
+            const toggle = document.getElementById('recall-toggle'), knob = document.getElementById('recall-knob');
+            if(active) { document.body.classList.add('recall-mode'); toggle.classList.add('bg-slate-600'); knob.classList.add('translate-x-6'); }
+            else { document.body.classList.remove('recall-mode'); toggle.classList.remove('bg-slate-600'); knob.classList.remove('translate-x-6'); }
+        }
+        function toggleMobileMenu() { const s=document.getElementById('sidebar'); if(s.classList.contains('hidden')) s.classList.remove('hidden','flex','absolute','h-full','z-50'); else s.classList.add('hidden'); }
+        document.addEventListener('DOMContentLoaded', () => { updateSidebarUI(); document.querySelectorAll('.reveal-text').forEach(el => el.addEventListener('click', function(){ if(document.body.classList.contains('recall-mode')) this.classList.toggle('revealed'); })); });
+    </script>
+</body>
+</html>
