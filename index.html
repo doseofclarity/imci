@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>IMCI – Integrated Management of Childhood Illnesses | PHN Review</title>
+    <title>IMCI – Integrated Management of Childhood Illnesses (WHO 2005) | PHN Review</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
@@ -31,6 +31,11 @@
         .locked-section { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
         .quiz-feedback-correct { background-color: #dcfce7; border-left: 4px solid #22c55e; }
         .quiz-feedback-wrong { background-color: #fee2e2; border-left: 4px solid #ef4444; }
+        #recall-toggle { cursor: pointer; transition: background-color 0.2s; }
+        .table-pink { background-color: #fce4e4; }
+        .table-yellow { background-color: #fef9e3; }
+        .table-green { background-color: #e6f7e6; }
+        .sidebar-icon { width: 1.75rem; text-align: center; }
     </style>
 </head>
 <body class="bg-slate-50 h-screen flex flex-col md:flex-row font-sans text-slate-800 overflow-hidden">
@@ -41,46 +46,47 @@
             <i class="fa-solid fa-bars text-2xl"></i>
         </button>
         <h1 class="font-bold text-lg absolute left-1/2 transform -translate-x-1/2 pointer-events-none">
-            <i class="fa-solid fa-child mr-2 text-sky-300"></i> IMCI Review
+            <i class="fa-solid fa-child mr-2 text-sky-300"></i> IMCI (WHO 2005)
         </h1>
         <div class="w-8"></div>
     </div>
 
-    <!-- Sidebar navigation -->
+    <!-- Sidebar navigation - comprehensive -->
     <nav id="sidebar" class="hidden md:flex flex-col w-full md:w-80 bg-white shadow-2xl h-full absolute md:relative z-30 transition-transform duration-300 shrink-0 border-r border-slate-200">
         <div class="p-6 bg-gradient-to-br from-slate-800 to-slate-700 text-white hidden md:block shrink-0">
             <h1 class="font-black text-2xl tracking-wide"><i class="fa-solid fa-child text-sky-300 mr-2"></i> IMCI</h1>
-            <p class="text-sm text-slate-300 mt-1 font-medium">Integrated Management of Childhood Illnesses</p>
+            <p class="text-sm text-slate-300 mt-1 font-medium">WHO Integrated Management of Childhood Illnesses (2005)</p>
         </div>
         <div class="flex-1 overflow-y-auto py-4">
             <ul class="space-y-1 text-sm font-medium">
-                <li><button onclick="showSection('home')" id="btn-home" class="nav-btn w-full text-left px-6 py-3 bg-slate-100 text-slate-800 border-r-4 border-slate-800 transition-colors"><i class="fa-solid fa-house w-6 nav-icon"></i><i class="fa-solid fa-lock w-6 hidden text-slate-400"></i> Home / Start</button></li>
-                <li><button onclick="showSection('overview')" id="btn-overview" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-chart-line w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> 1. Epidemiology & Overview</button></li>
-                <li><button onclick="showSection('danger')" id="btn-danger" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-triangle-exclamation w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> 2. Danger Signs & Assessment</button></li>
-                <li><button onclick="showSection('classification')" id="btn-classification" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-chart-simple w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> 3. Classification (Color Coding)</button></li>
-                <li><button onclick="showSection('cough')" id="btn-cough" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-lungs w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> 4. Cough / Difficult Breathing</button></li>
-                <li><button onclick="showSection('diarrhea')" id="btn-diarrhea" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-toilet w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> 5. Diarrhea & Dehydration</button></li>
-                <li><button onclick="showSection('fever')" id="btn-fever" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-temperature-high w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> 6. Fever & Measles</button></li>
-                <li><button onclick="showSection('ear')" id="btn-ear" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-ear-deaf w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> 7. Ear Problems</button></li>
-                <li><button onclick="showSection('malnutrition')" id="btn-malnutrition" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-apple-alt w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> 8. Malnutrition & Anemia</button></li>
-                <li><button onclick="showSection('phn')" id="btn-phn" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-user-nurse w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> 9. PHN Role & Nursing Care</button></li>
-                <li><button onclick="showSection('mnemonics')" id="btn-mnemonics" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors border-t border-slate-200 mt-2 locked-section"><i class="fa-solid fa-brain w-6 text-amber-500 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> Mnemonic Appendix</button></li>
-                <li><button onclick="showSection('final_quiz_sec')" id="btn-final_quiz_sec" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-graduation-cap w-6 text-green-600 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> Final 50‑Item Exam</button></li>
+                <li><button onclick="showSection('home')" id="btn-home" class="nav-btn w-full text-left px-6 py-3 bg-slate-100 text-slate-800 border-r-4 border-slate-800 transition-colors"><i class="fa-solid fa-house w-6 sidebar-icon nav-icon"></i><i class="fa-solid fa-lock w-6 hidden text-slate-400 sidebar-icon"></i> Home / Start</button></li>
+                <li><button onclick="showSection('overview')" id="btn-overview" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-chart-line w-6 sidebar-icon nav-icon hidden"></i><i class="fa-solid fa-lock w-6 sidebar-icon text-slate-400"></i> 1. IMCI Process & Danger Signs</button></li>
+                <li><button onclick="showSection('cough')" id="btn-cough" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-lungs w-6 sidebar-icon nav-icon hidden"></i><i class="fa-solid fa-lock w-6 sidebar-icon text-slate-400"></i> 2. Cough / Difficult Breathing</button></li>
+                <li><button onclick="showSection('diarrhea')" id="btn-diarrhea" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-toilet w-6 sidebar-icon nav-icon hidden"></i><i class="fa-solid fa-lock w-6 sidebar-icon text-slate-400"></i> 3. Diarrhoea & Dehydration</button></li>
+                <li><button onclick="showSection('fever')" id="btn-fever" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-temperature-high w-6 sidebar-icon nav-icon hidden"></i><i class="fa-solid fa-lock w-6 sidebar-icon text-slate-400"></i> 4. Fever, Malaria & Measles</button></li>
+                <li><button onclick="showSection('ear')" id="btn-ear" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-ear-deaf w-6 sidebar-icon nav-icon hidden"></i><i class="fa-solid fa-lock w-6 sidebar-icon text-slate-400"></i> 5. Ear Problems</button></li>
+                <li><button onclick="showSection('malnutrition')" id="btn-malnutrition" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-apple-alt w-6 sidebar-icon nav-icon hidden"></i><i class="fa-solid fa-lock w-6 sidebar-icon text-slate-400"></i> 6. Malnutrition & Anaemia</button></li>
+                <li><button onclick="showSection('younginfant')" id="btn-younginfant" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-baby w-6 sidebar-icon nav-icon hidden"></i><i class="fa-solid fa-lock w-6 sidebar-icon text-slate-400"></i> 7. Sick Young Infant (1 wk – 2 mo)</button></li>
+                <li><button onclick="showSection('immunization')" id="btn-immunization" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-syringe w-6 sidebar-icon nav-icon hidden"></i><i class="fa-solid fa-lock w-6 sidebar-icon text-slate-400"></i> 8. Immunization & Feeding</button></li>
+                <li><button onclick="showSection('phn')" id="btn-phn" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-user-nurse w-6 sidebar-icon nav-icon hidden"></i><i class="fa-solid fa-lock w-6 sidebar-icon text-slate-400"></i> 9. PHN Role & Treatment</button></li>
+                <li><button onclick="showSection('followup')" id="btn-followup" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-calendar-check w-6 sidebar-icon nav-icon hidden"></i><i class="fa-solid fa-lock w-6 sidebar-icon text-slate-400"></i> 10. Follow‑up & Counselling</button></li>
+                <li><button onclick="showSection('mnemonics')" id="btn-mnemonics" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors border-t border-slate-200 mt-2 locked-section"><i class="fa-solid fa-brain w-6 sidebar-icon text-amber-500 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 sidebar-icon text-slate-400"></i> Mnemonic Appendix</button></li>
+                <li><button onclick="showSection('final_quiz_sec')" id="btn-final_quiz_sec" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-graduation-cap w-6 sidebar-icon text-green-600 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 sidebar-icon text-slate-400"></i> Final 50‑Item Exam</button></li>
             </ul>
         </div>
     </nav>
 
     <main class="flex-1 h-full overflow-y-auto bg-slate-100 relative w-full">
+        <!-- Active recall toggle -->
         <div class="fixed top-16 md:top-4 right-4 md:right-8 z-40 flex items-center bg-white/90 backdrop-blur px-4 py-3 rounded-full shadow-lg border border-slate-200 cursor-pointer hover:bg-slate-50 transition-colors" onclick="toggleRecallMode()">
             <span class="mr-3 text-sm font-bold text-slate-700 hidden md:inline"><i class="fa-solid fa-brain text-sky-600 mr-1"></i> Active Recall</span>
             <span class="mr-3 text-sm font-bold text-slate-700 md:hidden"><i class="fa-solid fa-brain text-sky-600"></i></span>
-            <button id="recall-toggle" class="w-12 h-6 bg-slate-300 rounded-full relative transition-colors duration-300 focus:outline-none shadow-inner pointer-events-none">
+            <div id="recall-toggle" class="w-12 h-6 bg-slate-300 rounded-full relative transition-colors duration-300 shadow-inner">
                 <div id="recall-knob" class="w-5 h-5 bg-white rounded-full absolute top-0.5 left-0.5 transition-transform duration-300 shadow"></div>
-            </button>
+            </div>
         </div>
 
         <div class="p-4 md:p-8 max-w-6xl mx-auto pb-32">
-
             <!-- HOME SECTION -->
             <section id="home" class="content-section flex flex-col items-center justify-center min-h-[80vh] text-center block">
                 <div class="bg-gradient-to-br from-slate-800 to-slate-700 text-white rounded-3xl shadow-2xl p-10 md:p-16 w-full relative overflow-hidden">
@@ -89,10 +95,10 @@
                         <div class="bg-white/10 backdrop-blur-sm inline-block p-4 rounded-full text-sky-300 mb-6 shadow-sm border border-white/20">
                             <i class="fa-solid fa-stethoscope text-5xl"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-300 mb-2 uppercase tracking-widest">IMCI Study Module</h3>
+                        <h3 class="text-xl font-bold text-slate-300 mb-2 uppercase tracking-widest">WHO IMCI Handbook 2005</h3>
                         <h1 class="text-4xl md:text-6xl font-black text-white mb-6 leading-tight drop-shadow-md">Integrated Management of Childhood Illnesses</h1>
                         <div class="bg-white/10 backdrop-blur inline-block px-6 py-3 rounded-full mb-10 border border-white/20">
-                            <p class="text-lg text-white font-medium">For sick children aged 2 months – 5 years</p>
+                            <p class="text-lg text-white font-medium">For sick children age 2 months up to 5 years<br>➕ young infants age 1 week up to 2 months</p>
                         </div>
                         <button onclick="unlockFirstSection()" class="bg-sky-600 hover:bg-sky-500 text-white font-black py-4 px-10 rounded-full shadow-xl transition-transform hover:scale-105 text-lg flex items-center mx-auto focus:outline-none">
                             Begin Lecture <i class="fa-solid fa-arrow-right ml-3"></i>
@@ -101,168 +107,192 @@
                 </div>
             </section>
 
-            <!-- SECTION 1: Epidemiology & Overview -->
+            <!-- SECTION 1: Overview & Danger Signs -->
             <section id="overview" class="content-section hidden">
                 <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-sky-500 pb-3"><i class="fa-solid fa-chart-line text-sky-500 mr-4"></i> Epidemiology & Overview</h2>
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-sky-500 pb-3"><i class="fa-solid fa-chart-line text-sky-500 mr-4"></i> IMCI Process & General Danger Signs</h2>
+                    <div class="bg-slate-100 p-4 rounded mb-6">
+                        <p><strong>IMCI target age:</strong> <span class="reveal-text font-bold">2 months to 5 years</span> (plus young infants 1 wk–2 mo).<br>
+                        <strong>4 main symptoms:</strong> cough/difficult breathing, diarrhoea, fever, ear problem.<br>
+                        <strong>Case management steps:</strong> Assess → Classify (colour‑coded) → Identify treatment → Treat → Counsel mother → Follow‑up.</p>
+                    </div>
                     <div class="grid md:grid-cols-2 gap-6">
-                        <div class="bg-slate-50 p-5 rounded-xl">
-                            <h3 class="font-bold text-lg mb-2">Top Causes of Mortality</h3>
-                            <ul class="list-disc pl-5 space-y-1">
-                                <li><strong>Newborns:</strong> Pneumonia (2/1,000 LB), Bacterial sepsis (1.8/1,000)</li>
-                                <li><strong>0-4 years:</strong> Pneumonia (37.76/100k), Accidents (17.63/100k)</li>
-                                <li><strong>5-9 years:</strong> Accidents, Pneumonia, Malignant neoplasms</li>
-                            </ul>
+                        <div class="bg-red-50 p-4 rounded-xl border-l-4 border-red-500">
+                            <h3 class="font-bold text-red-800">🔴 General Danger Signs (ANY one = VERY SEVERE)</h3>
+                            <ul class="list-disc pl-5 mt-2"><li><span class="reveal-text">Unable to drink or breastfeed</span></li><li><span class="reveal-text">Vomits everything</span></li><li><span class="reveal-text">Convulsions (fits)</span></li><li><span class="reveal-text">Lethargic or unconscious</span></li></ul>
                         </div>
-                        <div class="bg-slate-50 p-5 rounded-xl">
-                            <h3 class="font-bold text-lg mb-2">Population Estimates</h3>
-                            <p>0-4 years: ~10 million children<br>5-10 years: ~10 million children<br>Newborns: first month of life</p>
-                            <p class="mt-3"><strong>IMCI goal:</strong> Reduce morbidity & mortality in children <5 years.</p>
+                        <div class="bg-blue-50 p-4 rounded-xl">
+                            <h3 class="font-bold">Colour‑coded triage</h3>
+                            <p>🟢 <span class="reveal-text">Green = home care</span><br>🟡 <span class="reveal-text">Yellow = treat at RHU / clinic</span><br>🔴 <span class="reveal-text">Pink = urgent hospital referral</span></p>
+                            <p class="mt-2 text-sm">If child has 1 pink + 1 yellow → treat as PINK (urgent referral). Exception: dehydration needs 2+ signs for severe.</p>
                         </div>
                     </div>
-                    <button onclick="openQuiz('overview')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors flex items-center justify-center text-lg"><i class="fa-solid fa-list-check mr-3 text-2xl text-sky-400"></i> Take Quiz to Unlock Next Section</button>
+                    <button onclick="openQuiz('overview')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl">Take Quiz (10 items) to Unlock Next</button>
                 </div>
             </section>
 
-            <!-- SECTION 2: Danger Signs & Assessment -->
-            <section id="danger" class="content-section hidden">
-                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-sky-500 pb-3"><i class="fa-solid fa-triangle-exclamation text-sky-500 mr-4"></i> General Danger Signs (ANY ONE = VERY SEVERE DISEASE)</h2>
-                    <div class="grid md:grid-cols-2 gap-5">
-                        <div class="bg-red-50 p-4 rounded-xl border-l-4 border-red-500"><span class="font-bold">🔴 Unable to drink/breastfeed</span> – child cannot suck or swallow when offered.</div>
-                        <div class="bg-red-50 p-4 rounded-xl border-l-4 border-red-500"><span class="font-bold">🔴 Vomits everything</span> – cannot hold down any food/fluids/medicine.</div>
-                        <div class="bg-red-50 p-4 rounded-xl border-l-4 border-red-500"><span class="font-bold">🔴 Convulsions</span> – stiff arms/legs, loss of consciousness.</div>
-                        <div class="bg-red-50 p-4 rounded-xl border-l-4 border-red-500"><span class="font-bold">🔴 Lethargic or unconscious</span> – unusually sleepy, hard to wake, or cannot be wakened.</div>
-                    </div>
-                    <div class="mt-6 bg-slate-100 p-4 rounded-xl">
-                        <p><strong>Assessment steps:</strong> Ask problem → check danger signs → ask 4 main symptoms (cough, diarrhea, fever, ear) → check nutrition/immunization → assess other problems.</p>
-                    </div>
-                    <button onclick="openQuiz('danger')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors flex items-center justify-center text-lg"><i class="fa-solid fa-list-check mr-3 text-2xl text-sky-400"></i> Take Quiz to Unlock Next Section</button>
-                </div>
-            </section>
-
-            <!-- SECTION 3: Classification (Color Coding) -->
-            <section id="classification" class="content-section hidden">
-                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-sky-500 pb-3"><i class="fa-solid fa-chart-simple text-sky-500 mr-4"></i> Color‑Coded Classification</h2>
-                    <div class="grid md:grid-cols-3 gap-4 text-center">
-                        <div class="bg-green-100 p-4 rounded-xl border border-green-300"><span class="font-black text-green-800 text-2xl">🟢 GREEN</span><br>Mild → Home care</div>
-                        <div class="bg-yellow-100 p-4 rounded-xl border border-yellow-300"><span class="font-black text-yellow-800 text-2xl">🟡 YELLOW</span><br>Moderate → RHU management</div>
-                        <div class="bg-pink-100 p-4 rounded-xl border border-pink-300"><span class="font-black text-pink-800 text-2xl">🔴 PINK</span><br>Severe → Urgent hospital referral</div>
-                    </div>
-                    <p class="mt-4 text-sm text-slate-600">⚠️ If a child has 1 PINK + 1 YELLOW, treat as PINK (urgent referral). Exception: Dehydration requires 2 or more signs for severe classification.</p>
-                    <button onclick="openQuiz('classification')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors flex items-center justify-center text-lg"><i class="fa-solid fa-list-check mr-3 text-2xl text-sky-400"></i> Take Quiz to Unlock Next Section</button>
-                </div>
-            </section>
-
-            <!-- SECTION 4: Cough / Difficult Breathing -->
+            <!-- SECTION 2: Cough or Difficult Breathing -->
             <section id="cough" class="content-section hidden">
                 <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-sky-500 pb-3"><i class="fa-solid fa-lungs text-sky-500 mr-4"></i> Cough or Difficult Breathing</h2>
-                    <div class="overflow-x-auto">
+                    <h2 class="text-3xl font-black border-b-2 border-sky-500 pb-3">🫁 Cough or Difficult Breathing</h2>
+                    <div class="overflow-x-auto mt-4">
                         <table class="w-full text-sm border-collapse">
-                            <thead class="bg-slate-800 text-white"><tr><th class="p-2">Signs</th><th class="p-2">Classify as</th><th class="p-2">Treatment</th></tr></thead>
-                            <tbody class="divide-y">
-                                <tr class="bg-pink-50"><td class="p-2">Danger sign OR chest indrawing OR stridor in calm child</td><td class="font-bold">Severe pneumonia / very severe disease</td><td>1st dose antibiotic, URGENT refer</td></tr>
-                                <tr class="bg-yellow-50"><td class="p-2">Fast breathing only: 2-12 mo ≥50/min; 12-59 mo ≥40/min</td><td class="font-bold">Pneumonia</td><td>Oral antibiotic 5 days, follow-up 2 days</td></tr>
-                                <tr class="bg-green-50"><td class="p-2">No signs of pneumonia/very severe</td><td class="font-bold">No pneumonia: cough or cold</td><td>Home care, follow-up 5 days if not improving</td></tr>
+                            <thead><tr class="bg-slate-800 text-white"><th class="p-2">SIGNS</th><th>CLASSIFY AS</th><th>TREATMENT</th></tr></thead>
+                            <tbody>
+                                <tr class="table-pink"><td class="p-2">Any general danger sign OR chest indrawing OR stridor in calm child</td><td class="font-bold">SEVERE PNEUMONIA OR VERY SEVERE DISEASE</td><td>1st dose antibiotic, URGENT refer</td></tr>
+                                <tr class="table-yellow"><td class="p-2">Fast breathing: 2-12 mo ≥50/min; 12-59 mo ≥40/min</td><td class="font-bold">PNEUMONIA</td><td>Oral antibiotic 5 days, follow-up 2 days</td></tr>
+                                <tr class="table-green"><td class="p-2">No signs of pneumonia/very severe</td><td class="font-bold">NO PNEUMONIA: COUGH OR COLD</td><td>Home care, soothe throat, follow-up 5 days if not improving</td></tr>
                             </tbody>
                         </table>
                     </div>
-                    <div class="mt-4 bg-amber-50 p-3 rounded"><strong>💡 Chronic cough >30 days</strong> → consider TB, asthma, whooping cough → refer.</div>
-                    <button onclick="openQuiz('cough')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors flex items-center justify-center text-lg"><i class="fa-solid fa-list-check mr-3 text-2xl text-sky-400"></i> Take Quiz to Unlock Next Section</button>
+                    <div class="mt-4 bg-amber-50 p-2 rounded">💡 Chronic cough >30 days → refer for TB/asthma/whooping cough.</div>
+                    <button onclick="openQuiz('cough')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl">Take Quiz (10 items) to Unlock Next</button>
                 </div>
             </section>
 
-            <!-- SECTION 5: Diarrhea & Dehydration -->
+            <!-- SECTION 3: Diarrhoea & Dehydration -->
             <section id="diarrhea" class="content-section hidden">
                 <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-sky-500 pb-3"><i class="fa-solid fa-toilet text-sky-500 mr-4"></i> Diarrhea & Dehydration Assessment</h2>
-                    <div class="grid md:grid-cols-2 gap-5">
-                        <div><h3 class="font-bold">Dehydration signs (2 or more = severe)</h3><ul class="list-disc pl-5"><li>Restless/irritable vs lethargic/unconscious</li><li>Sunken eyes</li><li>Drinks eagerly / poorly / not able</li><li>Skin pinch: slow or very slow (>2 sec)</li></ul></div>
-                        <div><h3 class="font-bold">Classification</h3><ul class="list-disc pl-5"><li><strong>Severe dehydration</strong> (pink) → IV fluids, urgent referral</li><li><strong>Some dehydration</strong> (yellow) → Plan B (ORS + continue feeding)</li><li><strong>No dehydration</strong> (green) → home care, extra fluids</li></ul></div>
+                    <h2 class="text-3xl font-black border-b-2 border-sky-500 pb-3">💧 Diarrhoea & Dehydration</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm border">
+                            <thead><tr class="bg-slate-800 text-white"><th class="p-2">SIGNS (2 or more)</th><th>CLASSIFY</th><th>TREATMENT</th></tr></thead>
+                            <tbody>
+                                <tr class="table-pink"><td>Lethargic/unconscious, sunken eyes, not able to drink, skin pinch very slow</td><td class="font-bold">SEVERE DEHYDRATION</td><td>Plan C (IV or NG fluids), urgent refer if other severe</td></tr>
+                                <tr class="table-yellow"><td>Restless/irritable, sunken eyes, drinks eagerly/thirsty, skin pinch slow</td><td class="font-bold">SOME DEHYDRATION</td><td>Plan B (ORS over 4 hours), continue feeding</td></tr>
+                                <tr class="table-green"><td>Not enough signs for some/severe</td><td class="font-bold">NO DEHYDRATION</td><td>Plan A (home fluids), continue feeding</td></tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="mt-4 bg-indigo-50 p-3 rounded"><strong>📌 Persistent diarrhea ≥14 days</strong> → special feeding; refer if severe. <strong>Dysentery (blood in stool)</strong> → antibiotics + dehydration management.</div>
-                    <button onclick="openQuiz('diarrhea')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors flex items-center justify-center text-lg"><i class="fa-solid fa-list-check mr-3 text-2xl text-sky-400"></i> Take Quiz to Unlock Next Section</button>
+                    <div class="mt-4 bg-indigo-50 p-2 rounded"><strong>Persistent diarrhoea (≥14 days):</strong> if dehydration present → refer; if not → special feeding, follow-up 5 days.<br><strong>Dysentery (blood in stool):</strong> antibiotic for Shigella 5 days, follow-up 2 days.</div>
+                    <button onclick="openQuiz('diarrhea')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl">Take Quiz (10 items) to Unlock Next</button>
                 </div>
             </section>
 
-            <!-- SECTION 6: Fever & Measles -->
+            <!-- SECTION 4: Fever, Malaria & Measles -->
             <section id="fever" class="content-section hidden">
                 <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-sky-500 pb-3"><i class="fa-solid fa-temperature-high text-sky-500 mr-4"></i> Fever (≥37.5°C) & Measles</h2>
-                    <p><strong>Fever >7 days</strong> → consider typhoid or severe disease. Check for stiff neck (meningitis → very severe).</p>
-                    <p><strong>Measles:</strong> generalized rash + cough/runny nose/red eyes. Complications: mouth ulcers, pus draining eyes, corneal clouding → give Vitamin A.</p>
-                    <div class="bg-amber-50 p-3 rounded mt-3"><strong>Malaria risk:</strong> high/ low/ no risk areas. Runny nose makes malaria unlikely in low/no risk areas.</div>
-                    <button onclick="openQuiz('fever')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors flex items-center justify-center text-lg"><i class="fa-solid fa-list-check mr-3 text-2xl text-sky-400"></i> Take Quiz to Unlock Next Section</button>
+                    <h2 class="text-3xl font-black border-b-2 border-sky-500 pb-3">🌡️ Fever, Malaria Risk & Measles</h2>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm mb-4">
+                        <div class="border p-2 rounded"><strong>High malaria risk</strong> → VERY SEVERE FEBRILE DISEASE or MALARIA</div>
+                        <div class="border p-2 rounded"><strong>Low malaria risk</strong> → VERY SEVERE FEBRILE DISEASE, MALARIA (no other cause), or FEVER – MALARIA UNLIKELY</div>
+                        <div class="border p-2 rounded"><strong>No malaria risk</strong> → VERY SEVERE FEBRILE DISEASE or FEVER – MALARIA UNLIKELY</div>
+                    </div>
+                    <div class="bg-amber-50 p-3 rounded">⚠️ Stiff neck = VERY SEVERE FEBRILE DISEASE → urgent referral.<br>
+                    <strong>Measles:</strong> generalized rash + cough/runny nose/red eyes → give vitamin A (200,000 IU if ≥12 mo). Corneal clouding or deep mouth ulcers = SEVERE COMPLICATED MEASLES.</div>
+                    <button onclick="openQuiz('fever')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl">Take Quiz (10 items) to Unlock Next</button>
                 </div>
             </section>
 
-            <!-- SECTION 7: Ear Problems -->
+            <!-- SECTION 5: Ear Problems -->
             <section id="ear" class="content-section hidden">
                 <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-sky-500 pb-3"><i class="fa-solid fa-ear-deaf text-sky-500 mr-4"></i> Ear Problem</h2>
-                    <ul class="list-disc pl-5 space-y-2">
-                        <li><strong>Tender swelling behind ear (mastoiditis)</strong> → URGENT referral, give antibiotic & paracetamol.</li>
-                        <li><strong>Pus draining <14 days or ear pain</strong> → acute ear infection → oral antibiotic 5 days + pain relief + dry ear.</li>
-                        <li><strong>Pus draining ≥14 days</strong> → chronic ear infection → dry ear only, follow-up 5 days.</li>
-                        <li><strong>No ear pain, no pus</strong> → no ear infection.</li>
-                    </ul>
-                    <button onclick="openQuiz('ear')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors flex items-center justify-center text-lg"><i class="fa-solid fa-list-check mr-3 text-2xl text-sky-400"></i> Take Quiz to Unlock Next Section</button>
-                </div>
-            </section>
-
-            <!-- SECTION 8: Malnutrition & Anemia -->
-            <section id="malnutrition" class="content-section hidden">
-                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-sky-500 pb-3"><i class="fa-solid fa-apple-alt text-sky-500 mr-4"></i> Malnutrition & Anemia</h2>
-                    <p><strong>Look for:</strong> visible severe wasting (marasmus), palmar pallor (anemia), edema of both feet (kwashiorkor).<br>
-                    <strong>Measure weight for age:</strong> below bottom curve = very low weight.</p>
-                    <div class="bg-slate-100 p-3 rounded mt-2"><strong>Iron supplementation duration:</strong> 3 months; follow‑up at 14 days for pallor.</div>
-                    <button onclick="openQuiz('malnutrition')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors flex items-center justify-center text-lg"><i class="fa-solid fa-list-check mr-3 text-2xl text-sky-400"></i> Take Quiz to Unlock Next Section</button>
-                </div>
-            </section>
-
-            <!-- SECTION 9: PHN Role & Nursing Care -->
-            <section id="phn" class="content-section hidden">
-                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-sky-500 pb-3"><i class="fa-solid fa-user-nurse text-sky-500 mr-4"></i> PHN Role in IMCI</h2>
-                    <ul class="list-disc pl-5 space-y-2">
-                        <li>Assess children for danger signs, fast breathing, chest indrawing, stridor.</li>
-                        <li>Classify illness using color‑coded tables (green/yellow/pink).</li>
-                        <li>Provide home care (ORS, antibiotics, feeding advice) for green/yellow.</li>
-                        <li>Refer pink cases urgently; give pre‑referral treatment (first dose antibiotic, vitamin A).</li>
-                        <li>Counsel caretakers on when to return, feeding during illness, and follow‑up schedules.</li>
-                        <li>Maintain IMCI recording forms and coordinate with RHU/hospital.</li>
-                    </ul>
-                    <button onclick="openQuiz('phn')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors flex items-center justify-center text-lg"><i class="fa-solid fa-list-check mr-3 text-2xl text-sky-400"></i> Take Quiz to Unlock Next Section</button>
-                </div>
-            </section>
-
-            <!-- SECTION 10: Mnemonics -->
-            <section id="mnemonics" class="content-section hidden">
-                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-sky-500 pb-3"><i class="fa-solid fa-brain text-sky-500 mr-4"></i> Mnemonics for IMCI</h2>
-                    <table class="w-full text-sm border-collapse border">
-                        <thead class="bg-slate-800 text-white"><tr><th class="p-2">Topic</th><th class="p-2">Mnemonic</th><th class="p-2">Meaning</th></tr></thead>
+                    <h2 class="text-3xl font-black border-b-2 border-sky-500 pb-3">👂 Ear Problems</h2>
+                    <table class="w-full text-sm border">
+                        <thead><tr class="bg-slate-800 text-white"><th class="p-2">SIGNS</th><th>CLASSIFY</th><th>TREATMENT</th></tr></thead>
                         <tbody>
-                            <tr><td class="p-2">General Danger Signs</td><td class="font-bold">UVLC</td><td class="reveal-text">Unable to drink, Vomits everything, Lethargic, Convulsions</td></tr>
-                            <tr class="bg-slate-50"><td>Fast breathing thresholds</td><td class="font-bold">2-12 mo ≥50; 12-59 mo ≥40</td><td class="reveal-text">"50 for 2‑12 months, 40 for 1‑5 years"</td></tr>
-                            <tr><td>Pink (severe) conditions</td><td class="font-bold">DANGER</td><td class="reveal-text">Dehydration (severe), Any danger sign, Not able to drink, General danger sign, Ear (mastoiditis), Respiratory (stridor/indrawing)</td></tr>
-                            <tr class="bg-slate-50"><td>Some dehydration signs</td><td class="font-bold">SUNKEN + SLOW PINCH</td><td class="reveal-text">Sunken eyes, Skin pinch goes back slowly, Drinks eagerly/thirsty</td></tr>
+                            <tr class="table-pink"><td>Tender swelling behind ear</td><td class="font-bold">MASTOIDITIS</td><td>1st dose antibiotic, paracetamol, URGENT refer</td></tr>
+                            <tr class="table-yellow"><td>Pus draining <14 days OR ear pain</td><td class="font-bold">ACUTE EAR INFECTION</td><td>Oral antibiotic 5 days, paracetamol, dry ear, follow-up 5 days</td></tr>
+                            <tr class="table-yellow"><td>Pus draining ≥14 days</td><td class="font-bold">CHRONIC EAR INFECTION</td><td>Dry ear by wicking, follow-up 5 days</td></tr>
+                            <tr class="table-green"><td>No ear pain, no pus</td><td class="font-bold">NO EAR INFECTION</td><td>No treatment</td></tr>
                         </tbody>
                     </table>
-                    <button onclick="openQuiz('final_quiz')" class="mt-8 w-full bg-amber-500 text-slate-900 font-black py-4 rounded-xl shadow-md hover:bg-amber-400 transition-colors text-lg"><i class="fa-solid fa-graduation-cap mr-3"></i> Take Final 50‑Item Exam</button>
+                    <button onclick="openQuiz('ear')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl">Take Quiz (10 items) to Unlock Next</button>
                 </div>
             </section>
 
-            <!-- FINAL QUIZ SECTION -->
+            <!-- SECTION 6: Malnutrition & Anaemia -->
+            <section id="malnutrition" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black border-b-2 border-sky-500 pb-3">🍎 Malnutrition & Anaemia</h2>
+                    <table class="w-full text-sm border">
+                        <thead><tr class="bg-slate-800 text-white"><th class="p-2">SIGNS</th><th>CLASSIFY</th><th>TREATMENT</th></tr></thead>
+                        <tbody>
+                            <tr class="table-pink"><td>Visible severe wasting OR severe palmar pallor OR oedema of both feet</td><td class="font-bold">SEVERE MALNUTRITION OR SEVERE ANAEMIA</td><td>Vitamin A, URGENT refer</td></tr>
+                            <tr class="table-yellow"><td>Some palmar pallor OR very low weight for age</td><td class="font-bold">ANAEMIA OR VERY LOW WEIGHT</td><td>Assess feeding, iron, antimalarial if high risk, mebendazole (≥2y), follow-up 14d (pallor) / 30d (very low weight)</td></tr>
+                            <tr class="table-green"><td>Not very low weight and no signs</td><td class="font-bold">NO ANAEMIA AND NOT VERY LOW WEIGHT</td><td>If child <2y, assess feeding, advise</td></tr>
+                        </tbody>
+                    </table>
+                    <button onclick="openQuiz('malnutrition')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl">Take Quiz (10 items) to Unlock Next</button>
+                </div>
+            </section>
+
+            <!-- SECTION 7: Sick Young Infant (1 week – 2 months) -->
+            <section id="younginfant" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black border-b-2 border-sky-500 pb-3">🍼 Sick Young Infant (1 week – 2 months)</h2>
+                    <div class="bg-red-50 p-3 rounded mb-4"><strong>Possible serious bacterial infection (PINK):</strong> convulsions, fast breathing (≥60/min), severe chest indrawing, nasal flaring, grunting, bulging fontanelle, pus draining ear, umbilical redness extending to skin, fever/hypothermia, many/severe pustules, lethargic/unconscious, less than normal movements → <span class="reveal-text">IM antibiotics, prevent low blood sugar, keep warm, URGENT refer</span>.</div>
+                    <div class="bg-yellow-50 p-3 rounded mb-4"><strong>Local bacterial infection (YELLOW):</strong> red umbilicus or skin pustules → <span class="reveal-text">oral antibiotic 5 days, treat local infection with gentian violet, follow-up 2 days</span>.</div>
+                    <div><strong>Feeding assessment:</strong> if low weight, not well attached, <8 feeds/24h, other foods/drinks → counsel, follow-up in 2 days (feeding problem) or 14 days (low weight).</div>
+                    <button onclick="openQuiz('younginfant')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl">Take Quiz (10 items) to Unlock Next</button>
+                </div>
+            </section>
+
+            <!-- SECTION 8: Immunization & Feeding -->
+            <section id="immunization" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black border-b-2 border-sky-500 pb-3">💉 Immunization & Feeding</h2>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="bg-slate-100 p-3 rounded"><strong>EPI schedule:</strong> BCG at birth; DPT/OPV/HepB at 6,10,14 weeks; Measles at 9 months. No contraindications to immunising a sick child well enough to go home. <span class="reveal-text">Only true contraindications: BCG for AIDS; DPT2/3 if convulsions/shock within 3 days of previous dose; DPT for recurrent convulsions/active neurological disease.</span></div>
+                        <div class="bg-slate-100 p-3 rounded"><strong>Feeding:</strong> Exclusive breastfeeding 0-6 months; continue breastfeeding up to 2 years; complementary feeding from 6 months (3x/day if breastfed, 5x/day if not). Active feeding, adequate servings.</div>
+                    </div>
+                    <button onclick="openQuiz('immunization')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl">Take Quiz (10 items) to Unlock Next</button>
+                </div>
+            </section>
+
+            <!-- SECTION 9: PHN Role & Treatment -->
+            <section id="phn" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black border-b-2 border-sky-500 pb-3">👩‍⚕️ PHN Role & Treatment</h2>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li>Assess danger signs, fast breathing, chest indrawing, stridor, dehydration, fever, ear, malnutrition, young infant signs.</li>
+                        <li>Classify using colour‑coded tables (pink/yellow/green).</li>
+                        <li>Give urgent pre‑referral treatments: <span class="reveal-text">1st dose antibiotic (IM if cannot drink), quinine for very severe febrile disease, vitamin A, paracetamol, treat to prevent low blood sugar (breastmilk/sugar water).</span></li>
+                        <li>Treat local infections: tetracycline eye ointment (size of rice grain), wicking ear, gentian violet (half‑strength for mouth/thrush, full‑strength for skin/umbilicus).</li>
+                        <li>Teach mother: ORS (Plan A/B), continued feeding, when to return (not able to drink, becomes sicker, fever, fast breathing, blood in stool).</li>
+                    </ul>
+                    <button onclick="openQuiz('phn')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl">Take Quiz (10 items) to Unlock Next</button>
+                </div>
+            </section>
+
+            <!-- SECTION 10: Follow-up & Counselling -->
+            <section id="followup" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black border-b-2 border-sky-500 pb-3">📅 Follow‑up & Counselling</h2>
+                    <div class="overflow-x-auto"><table class="w-full text-sm border"><thead><tr class="bg-slate-800 text-white"><th>Condition</th><th>Follow‑up interval</th></tr></thead><tbody>
+                        <tr><td>Pneumonia</td><td>2 days</td></tr><tr><td>Dysentery</td><td>2 days</td></tr><tr><td>Malaria (if fever persists)</td><td>2 days</td></tr>
+                        <tr><td>Acute ear infection / chronic ear infection</td><td>5 days</td></tr><tr><td>Persistent diarrhoea</td><td>5 days</td></tr><tr><td>Feeding problem</td><td>5 days</td></tr><tr><td>Pallor (anaemia)</td><td>14 days</td></tr><tr><td>Very low weight for age</td><td>30 days</td></tr>
+                    </tbody></table></div>
+                    <div class="mt-4 bg-green-50 p-2 rounded"><strong>When to return immediately:</strong> not able to drink/breastfeed, becomes sicker, develops fever (if not already), fast breathing/difficult breathing (if not already), blood in stool (if not already).</div>
+                    <button onclick="openQuiz('followup')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl">Take Quiz (10 items) to Unlock Next</button>
+                </div>
+            </section>
+
+            <!-- Mnemonics -->
+            <section id="mnemonics" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black border-b-2 border-sky-500 pb-3">🧠 Mnemonics for IMCI</h2>
+                    <table class="w-full text-sm border">
+                        <thead class="bg-slate-800 text-white"><tr><th class="p-2">Topic</th><th>Mnemonic</th><th class="reveal-text">Meaning (click)</th></tr></thead>
+                        <tbody>
+                            <tr><td>General Danger Signs</td><td class="font-bold">UVLC</td><td class="reveal-text">Unable to drink, Vomits everything, Lethargic, Convulsions</td></tr>
+                            <tr class="bg-slate-50"><td>Fast breathing thresholds</td><td class="font-bold">50-40</td><td class="reveal-text">2-12mo ≥50; 12-59mo ≥40</td></tr>
+                            <tr><td>Severe dehydration signs</td><td class="font-bold">SUNKEN + SLOW</td><td class="reveal-text">Sunken eyes, Skin pinch very slow, Not able to drink</td></tr>
+                            <tr class="bg-slate-50"><td>Measles complications</td><td class="font-bold">E.M.O.</td><td class="reveal-text">Eye infection, Mouth ulcers, Otitis media/pneumonia</td></tr>
+                            <tr><td>Possible serious bacterial infection (young infant)</td><td class="font-bold">FAST BREATHING +</td><td class="reveal-text">Fast breathing (≥60/min), Fever/hypothermia, Lethargy, Convulsions, Umbilical redness, Grunting, Nasal flaring, etc.</td></tr>
+                        </tbody>
+                    </table>
+                    <button onclick="openQuiz('final_quiz')" class="mt-8 w-full bg-amber-500 text-slate-900 font-black py-4 rounded-xl text-lg">Take Final 50‑Item Exam</button>
+                </div>
+            </section>
+
+            <!-- Final exam placeholder -->
             <section id="final_quiz_sec" class="content-section hidden">
                 <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 text-center min-h-[60vh] flex flex-col justify-center items-center">
                     <i class="fa-solid fa-graduation-cap text-8xl text-amber-400 mb-6"></i>
-                    <h2 class="text-4xl font-black text-slate-800 mb-4">IMCI Final Comprehensive Exam</h2>
-                    <p class="text-lg text-slate-600 mb-8 max-w-2xl">50 items covering all IMCI modules. Score ≥75% to pass.</p>
-                    <button onclick="openQuiz('final_quiz')" class="w-full max-w-md bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors text-xl">Start Final Exam</button>
+                    <h2 class="text-4xl font-black text-slate-800 mb-4">IMCI Final Exam</h2>
+                    <p class="text-lg text-slate-600 mb-8">50 items covering all modules. Score ≥75% to pass.</p>
+                    <button onclick="openQuiz('final_quiz')" class="w-full max-w-md bg-slate-800 text-white font-black py-4 rounded-xl">Start Final Exam</button>
                 </div>
             </section>
         </div>
@@ -275,102 +305,169 @@
             <h2 id="quiz-title" class="text-3xl font-black text-slate-800 mb-2"></h2>
             <p class="text-slate-600 mb-6 font-medium border-b pb-4">Score ≥75% to unlock next section.</p>
             <div id="quiz-questions-container" class="space-y-4"></div>
-            <button id="quiz-submit-btn" onclick="submitQuiz()" class="mt-8 w-full bg-sky-600 text-white font-bold py-4 rounded-xl hover:bg-sky-700 transition-colors shadow-lg text-lg">Submit Answers</button>
+            <button id="quiz-submit-btn" onclick="submitQuiz()" class="mt-8 w-full bg-sky-600 text-white font-bold py-4 rounded-xl hover:bg-sky-700">Submit Answers</button>
             <div id="quiz-result-container" class="hidden mt-6 p-4 rounded-xl bg-slate-100 border"></div>
         </div>
     </div>
 
     <script>
-        // ---------------------- QUIZ DATA --------------------------
-        const quizzes = {
-            overview: { title: 'IMCI: Epidemiology & Overview', next: 'danger', questions: [
-                { q: "What is the leading cause of mortality in children 0-4 years in the Philippines?", options: ["Accidents", "Pneumonia", "Malaria", "Diarrhea"], ans: 1 },
-                { q: "Newborn mortality rate is highest for which condition?", options: ["Sepsis", "Pneumonia", "Birth asphyxia", "Tetanus"], ans: 1 },
-                { q: "IMCI is designed for children aged?", options: ["Birth to 1 year", "2 months to 5 years", "0-12 months", "1-10 years"], ans: 1 },
-                { q: "Which age group has ~10 million children in the Philippines?", options: ["0-4 years", "5-9 years", "Both A and B", "Adolescents"], ans: 2 },
-                { q: "The top cause of death in children 5-9 years is?", options: ["Pneumonia", "Accidents", "Malaria", "Measles"], ans: 1 }
-            ] },
-            danger: { title: 'General Danger Signs', next: 'classification', questions: [
-                { q: "Which is NOT a general danger sign?", options: ["Unable to drink", "Vomits everything", "Mild fever", "Lethargy"], ans: 2 },
-                { q: "A child who cannot be wakened is classified as?", options: ["Unconscious", "Lethargic", "Severe dehydration", "Malaria"], ans: 0 },
-                { q: "If a child has convulsions, you should:", options: ["Give oral rehydration", "Treat as very severe disease", "Send home", "Give antibiotics only"], ans: 1 },
-                { q: "The first step in IMCI assessment is?", options: ["Check immunization", "Ask about the problem", "Count breathing", "Check for pallor"], ans: 1 },
-                { q: "A child who vomits everything cannot hold down:", options: ["Food only", "Fluids only", "Food, fluids, or oral medicine", "Only medicine"], ans: 2 }
-            ] },
-            classification: { title: 'Color Coding & Classification', next: 'cough', questions: [
-                { q: "Green classification means:", options: ["Urgent referral", "RHU management", "Home care", "Hospitalization"], ans: 2 },
-                { q: "Pink classification requires:", options: ["Follow-up in 5 days", "Urgent hospital referral", "ORS at home", "Antibiotics only"], ans: 1 },
-                { q: "Which classification is for moderate severity?", options: ["Green", "Yellow", "Pink", "Blue"], ans: 1 },
-                { q: "If a child has one pink and one yellow, the nurse should:", options: ["Treat as yellow", "Treat as pink", "Wait and see", "Refer to traditional healer"], ans: 1 },
-                { q: "Severe dehydration is classified as which color?", options: ["Green", "Yellow", "Pink", "Orange"], ans: 2 }
-            ] },
-            cough: { title: 'Cough / Difficult Breathing', next: 'diarrhea', questions: [
-                { q: "Fast breathing for a 10-month-old infant is ≥ ___ breaths/min.", options: ["40", "50", "60", "30"], ans: 1 },
-                { q: "For a child 3 years old, fast breathing is ≥ ___ breaths/min.", options: ["30", "40", "50", "60"], ans: 1 },
+        // ---------------------- 10 QUESTIONS PER SECTION (based on WHO IMCI 2005) --------------------------
+        const questionBank = {
+            overview: [
+                { q: "What is the target age range for IMCI assessment?", options: ["Birth to 1 week", "1 week to 2 months", "2 months to 5 years", "5 to 10 years"], ans: 2 },
+                { q: "Which is a general danger sign?", options: ["Mild fever", "Fast breathing", "Unable to drink or breastfeed", "Runny nose"], ans: 2 },
+                { q: "A child with any general danger sign is classified as:", options: ["Green", "Yellow", "Pink (very severe)", "No classification"], ans: 2 },
+                { q: "What are the 4 main symptoms in IMCI?", options: ["Cough, diarrhoea, fever, ear problem", "Rash, jaundice, convulsions, pallor", "Vomiting, dehydration, stridor, malnutrition", "Anaemia, immunization, feeding, trauma"], ans: 0 },
+                { q: "Pink colour on IMCI chart indicates:", options: ["Home care", "RHU management", "Urgent hospital referral", "Routine immunization"], ans: 2 },
+                { q: "Which sign is NOT a general danger sign?", options: ["Lethargic", "Vomits everything", "Chest indrawing", "Convulsions"], ans: 2 },
+                { q: "First step in IMCI assessment:", options: ["Check immunization", "Ask mother what the child's problems are", "Count breaths", "Check for oedema"], ans: 1 },
+                { q: "A child who is unconscious has:", options: ["Green classification", "A general danger sign", "No danger", "Mild illness"], ans: 1 },
+                { q: "The IMCI case management process includes:", options: ["Assess", "Classify", "Counsel", "All of the above"], ans: 3 },
+                { q: "For a child with a general danger sign, you should:", options: ["Complete assessment and give pre-referral treatment without delay", "Send home", "Wait for laboratory results", "Give only ORS"], ans: 0 }
+            ],
+            cough: [
+                { q: "Fast breathing for a 10-month-old infant:", options: ["≥40/min", "≥50/min", "≥60/min", "≥70/min"], ans: 1 },
+                { q: "Fast breathing for a 3-year-old child:", options: ["≥30/min", "≥40/min", "≥50/min", "≥60/min"], ans: 1 },
                 { q: "Chest indrawing indicates:", options: ["Mild cold", "Severe pneumonia", "No danger", "Malaria"], ans: 1 },
-                { q: "Stridor in a calm child is a sign of:", options: ["Common cold", "Life-threatening airway obstruction", "Asthma", "Bronchiolitis"], ans: 1 },
-                { q: "A child with fast breathing but no chest indrawing is classified as:", options: ["Severe pneumonia", "Pneumonia", "No pneumonia", "Very severe disease"], ans: 1 }
-            ] },
-            diarrhea: { title: 'Diarrhea & Dehydration', next: 'fever', questions: [
-                { q: "Two or more of which signs indicate severe dehydration?", options: ["Fever, cough", "Sunken eyes, slow skin pinch, drinking poorly", "Rash, conjunctivitis", "Fast breathing, wheezing"], ans: 1 },
-                { q: "Plan B (ORS + continued feeding) is for:", options: ["Severe dehydration", "Some dehydration", "No dehydration", "Dysentery only"], ans: 1 },
-                { q: "Persistent diarrhea is defined as lasting ≥ ___ days.", options: ["7", "10", "14", "21"], ans: 2 },
-                { q: "Dysentery is characterized by:", options: ["Watery stool", "Blood in stool", "White stool", "Green stool"], ans: 1 },
-                { q: "A child who is lethargic, has sunken eyes, and cannot drink is:", options: ["No dehydration", "Some dehydration", "Severe dehydration", "Healthy"], ans: 2 }
-            ] },
-            fever: { title: 'Fever & Measles', next: 'ear', questions: [
-                { q: "Fever lasting more than 7 days suggests:", options: ["Common cold", "Typhoid or severe disease", "Malaria", "Allergy"], ans: 1 },
-                { q: "Stiff neck in a febrile child indicates possible:", options: ["Meningitis", "Pneumonia", "Diarrhea", "Otitis media"], ans: 0 },
-                { q: "Measles rash appears with which symptoms?", options: ["Cough, runny nose, red eyes", "Jaundice", "Swollen joints", "Bleeding"], ans: 0 },
-                { q: "Complication of measles requiring urgent Vitamin A includes:", options: ["Diarrhea", "Corneal clouding", "Fever", "Rash"], ans: 1 },
-                { q: "Runny nose in a low malaria risk area makes malaria:", options: ["Very likely", "Unlikely", "Certain", "No effect"], ans: 1 }
-            ] },
-            ear: { title: 'Ear Problems', next: 'malnutrition', questions: [
+                { q: "Stridor in a calm child means:", options: ["Common cold", "Life-threatening airway obstruction (very severe disease)", "Asthma", "Bronchiolitis"], ans: 1 },
+                { q: "Child with fast breathing but no chest indrawing is classified as:", options: ["Severe pneumonia", "Pneumonia", "No pneumonia", "Very severe disease"], ans: 1 },
+                { q: "Cough >30 days requires:", options: ["Antibiotics", "Referral for TB/asthma/whooping cough", "ORS", "Vitamin A"], ans: 1 },
+                { q: "Treatment for severe pneumonia (pink) includes:", options: ["First dose antibiotic + urgent referral", "Oral antibiotics at home", "ORS only", "No treatment"], ans: 0 },
+                { q: "Follow-up for pneumonia is in:", options: ["2 days", "5 days", "7 days", "14 days"], ans: 0 },
+                { q: "Which is NOT part of cough assessment?", options: ["Fast breathing", "Chest indrawing", "Stridor", "Skin pinch"], ans: 3 },
+                { q: "A child with chest indrawing but no fast breathing should be:", options: ["Treated as pneumonia", "Referred urgently as severe pneumonia", "Given ORS", "Sent home"], ans: 1 }
+            ],
+            diarrhea: [
+                { q: "Two signs of severe dehydration include:", options: ["Fever and cough", "Lethargic and sunken eyes", "Runny nose and rash", "Fast breathing and chest indrawing"], ans: 1 },
+                { q: "Plan B (ORS over 4 hours) is for:", options: ["Severe dehydration", "Some dehydration", "No dehydration", "Dysentery only"], ans: 1 },
+                { q: "Persistent diarrhoea lasts ≥ ___ days.", options: ["7", "10", "14", "21"], ans: 2 },
+                { q: "Dysentery is defined as:", options: ["Watery stool", "Blood in stool", "White stool", "Green stool"], ans: 1 },
+                { q: "A child with lethargy, sunken eyes, unable to drink is:", options: ["No dehydration", "Some dehydration", "Severe dehydration", "Healthy"], ans: 2 },
+                { q: "For some dehydration, give:", options: ["IV fluids", "ORS (Plan B) + continued feeding", "No fluids", "Antibiotics"], ans: 1 },
+                { q: "Skin pinch goes back very slowly (>2 seconds) indicates:", options: ["Normal", "Some dehydration", "Severe dehydration", "Edema"], ans: 2 },
+                { q: "Child with blood in stool is classified as:", options: ["No dehydration", "Some dehydration", "Dysentery", "Persistent diarrhoea"], ans: 2 },
+                { q: "Severe dehydration treatment:", options: ["ORS at home", "IV fluids (Plan C) or NG", "Antibiotics", "Vitamin A"], ans: 1 },
+                { q: "Zinc supplementation during diarrhoea:", options: ["Reduces duration and severity", "Stops diarrhoea immediately", "Prevents vomiting", "Treats fever"], ans: 0 }
+            ],
+            fever: [
+                { q: "Fever >7 days may indicate:", options: ["Common cold", "Typhoid or severe disease", "Malaria", "Allergy"], ans: 1 },
+                { q: "Stiff neck in a febrile child suggests:", options: ["Meningitis (very severe febrile disease)", "Pneumonia", "Diarrhoea", "Otitis media"], ans: 0 },
+                { q: "Measles rash appears with:", options: ["Cough, runny nose, red eyes", "Jaundice", "Swollen joints", "Bleeding"], ans: 0 },
+                { q: "Measles complication requiring urgent Vitamin A:", options: ["Diarrhoea", "Corneal clouding", "Fever", "Rash"], ans: 1 },
+                { q: "In low malaria risk, a child with fever and runny nose is classified as:", options: ["MALARIA", "VERY SEVERE FEBRILE DISEASE", "FEVER - MALARIA UNLIKELY", "PNEUMONIA"], ans: 2 },
+                { q: "Vitamin A dose for measles in a 12-month-old:", options: ["100,000 IU", "200,000 IU", "50,000 IU", "400,000 IU"], ans: 1 },
+                { q: "VERY SEVERE FEBRILE DISEASE requires:", options: ["Home care", "Urgent referral after giving quinine and antibiotic", "ORS", "Paracetamol only"], ans: 1 },
+                { q: "In high malaria risk, a child with fever and no other signs is classified as:", options: ["MALARIA", "FEVER - MALARIA UNLIKELY", "PNEUMONIA", "NO FEVER"], ans: 0 },
+                { q: "Children with measles should receive Vitamin A to:", options: ["Prevent complications", "Cure the rash", "Stop fever", "Treat cough"], ans: 0 },
+                { q: "For very severe febrile disease, give:", options: ["Quinine for severe malaria", "Only paracetamol", "No drugs", "Oral rehydration"], ans: 0 }
+            ],
+            ear: [
                 { q: "Mastoiditis presents with:", options: ["Ear discharge only", "Tender swelling behind the ear", "Itching", "Fever without ear pain"], ans: 1 },
-                { q: "Acute ear infection (<14 days pus or ear pain) is treated with:", options: ["Only ear drying", "Oral antibiotic + pain relief", "IV antibiotics", "No treatment"], ans: 1 },
-                { q: "Chronic ear infection (≥14 days discharge) requires:", options: ["Oral antibiotics", "Urgent referral", "Ear drying and follow-up", "Surgery immediately"], ans: 2 },
-                { q: "Mastoiditis requires:", options: ["Home care", "Urgent referral", "ORS", "Vitamin A"], ans: 1 },
-                { q: "Ear infection is a common cause of:", options: ["Hearing loss", "Blindness", "Anemia", "Rickets"], ans: 0 }
-            ] },
-            malnutrition: { title: 'Malnutrition & Anemia', next: 'phn', questions: [
-                { q: "Visible severe wasting is characteristic of:", options: ["Kwashiorkor", "Marasmus", "Anemia", "Vitamin A deficiency"], ans: 1 },
-                { q: "Bilateral edema of feet suggests:", options: ["Marasmus", "Kwashiorkor", "Dehydration", "Infection"], ans: 1 },
-                { q: "Palmar pallor indicates:", options: ["Jaundice", "Anemia", "Dehydration", "Malaria"], ans: 1 },
-                { q: "Iron supplementation for anemia is given for how many months?", options: ["1 month", "2 months", "3 months", "6 months"], ans: 2 },
-                { q: "Very low weight for age is defined as:", options: ["Below 3rd percentile", "Below bottom curve on weight-for-age chart", "Below 50th percentile", "Below 5 kg"], ans: 1 }
-            ] },
-            phn: { title: 'PHN Role in IMCI', next: 'mnemonics', questions: [
-                { q: "A child with chest indrawing and no danger sign should be?", options: ["Given ORS", "Referred urgently", "Sent home with antibiotics", "Given Vitamin A"], ans: 1 },
-                { q: "Pre-referral treatment for severe pneumonia includes:", options: ["First dose antibiotic", "ORS", "Zinc", "Iron"], ans: 0 },
-                { q: "The PHN should counsel caretakers on:", options: ["When to return", "Feeding during illness", "Follow-up schedule", "All of the above"], ans: 3 },
-                { q: "Which classification requires home care?", options: ["Pink", "Yellow", "Green", "Blue"], ans: 2 },
-                { q: "A follow-up visit for pneumonia should be scheduled in:", options: ["2 days", "5 days", "7 days", "14 days"], ans: 0 }
-            ] }
+                { q: "Acute ear infection (pus <14 days) is treated with:", options: ["Only ear drying", "Oral antibiotic + pain relief", "IV antibiotics", "No treatment"], ans: 1 },
+                { q: "Chronic ear infection (pus ≥14 days) requires:", options: ["Oral antibiotics", "Urgent referral", "Dry ear by wicking and follow-up", "Surgery immediately"], ans: 2 },
+                { q: "Mastoiditis requires:", options: ["Home care", "Urgent referral after first dose antibiotic", "ORS", "Vitamin A"], ans: 1 },
+                { q: "Ear infection is a leading cause of:", options: ["Hearing loss", "Blindness", "Anaemia", "Rickets"], ans: 0 },
+                { q: "To dry the ear, use:", options: ["Cotton swab deep", "Wicking with clean absorbent cloth", "Pour water", "Ignore"], ans: 1 },
+                { q: "Follow-up for acute ear infection is after:", options: ["2 days", "5 days", "7 days", "14 days"], ans: 1 },
+                { q: "Symptom suggesting acute ear infection:", options: ["Ear pain or irritability", "No pain", "Ringing", "Vertigo only"], ans: 0 },
+                { q: "Chronic ear infection follow-up:", options: ["5 days", "2 days", "Same day", "No follow-up"], ans: 0 },
+                { q: "Untreated mastoiditis can lead to:", options: ["Meningitis", "Otitis externa", "Tinnitus", "Fungal infection"], ans: 0 }
+            ],
+            malnutrition: [
+                { q: "Visible severe wasting indicates:", options: ["Kwashiorkor", "Marasmus", "Anaemia", "Vitamin A deficiency"], ans: 1 },
+                { q: "Bilateral oedema of feet suggests:", options: ["Marasmus", "Kwashiorkor", "Dehydration", "Infection"], ans: 1 },
+                { q: "Palmar pallor indicates:", options: ["Jaundice", "Anaemia", "Dehydration", "Malaria"], ans: 1 },
+                { q: "Iron supplementation for anaemia is given for:", options: ["1 month", "2 months", "3 months (14-day follow-up)", "6 months"], ans: 2 },
+                { q: "Very low weight for age means:", options: ["Below 3rd percentile", "Below bottom curve on weight-for-age chart", "Below 50th percentile", "Below 5 kg"], ans: 1 },
+                { q: "Follow-up for pallor is at:", options: ["2 days", "5 days", "14 days", "30 days"], ans: 2 },
+                { q: "Severe malnutrition or severe anaemia requires:", options: ["Vitamin A and urgent referral", "Iron only", "ORS", "Antibiotics only"], ans: 0 },
+                { q: "To assess oedema, press foot for a few seconds; a dent indicates:", options: ["Normal", "Kwashiorkor", "Dehydration", "Marasmus"], ans: 1 },
+                { q: "Which micronutrient deficiency causes night blindness?", options: ["Iron", "Vitamin A", "Iodine", "Zinc"], ans: 1 },
+                { q: "Severe malnutrition increases risk of death from:", options: ["Pneumonia, diarrhoea, measles", "Accidents", "Cancer", "Heart disease"], ans: 0 }
+            ],
+            younginfant: [
+                { q: "Fast breathing cut-off for a young infant (1 wk–2 mo) is:", options: ["≥50/min", "≥60/min", "≥40/min", "≥70/min"], ans: 1 },
+                { q: "Which sign indicates POSSIBLE SERIOUS BACTERIAL INFECTION in a young infant?", options: ["Red umbilicus without skin extension", "Skin pustules only", "Grunting", "Normal feeding"], ans: 2 },
+                { q: "Treatment for LOCAL BACTERIAL INFECTION in a young infant:", options: ["IM antibiotics", "Oral antibiotic 5 days + gentian violet", "Refer immediately", "No treatment"], ans: 1 },
+                { q: "A young infant with convulsions and bulging fontanelle should be:", options: ["Given ORS", "Referred urgently with IM antibiotics", "Sent home", "Given paracetamol"], ans: 1 },
+                { q: "How often should a young infant breastfeed to avoid feeding problem?", options: ["4 times/day", "6 times/day", "8 or more times/24h", "2 times/day"], ans: 2 },
+                { q: "Hypothermia in a young infant (axillary <35.5°C) is a sign of:", options: ["Local infection", "Possible serious bacterial infection", "Normal", "Feeding problem"], ans: 1 },
+                { q: "Follow-up for a young infant with LOCAL BACTERIAL INFECTION is in:", options: ["2 days", "5 days", "7 days", "14 days"], ans: 0 },
+                { q: "Thrush in a young infant is treated with:", options: ["Tetracycline eye ointment", "Half-strength gentian violet", "Oral antibiotics", "ORS"], ans: 1 },
+                { q: "Which is NOT a sign of possible serious bacterial infection?", options: ["Nasal flaring", "Umbilical redness extending to skin", "Mild chest indrawing (normal in young infant)", "Less than normal movements"], ans: 2 },
+                { q: "To prevent low blood sugar before referral, give:", options: ["ORS", "Breastmilk or sugar water", "IV saline", "Antibiotics"], ans: 1 }
+            ],
+            immunization: [
+                { q: "At what age is measles vaccine given?", options: ["Birth", "6 weeks", "9 months", "12 months"], ans: 2 },
+                { q: "Which vaccine should not be given to a child with AIDS?", options: ["OPV", "DPT", "BCG", "Measles"], ans: 2 },
+                { q: "Exclusive breastfeeding is recommended up to:", options: ["4 months", "6 months", "9 months", "12 months"], ans: 1 },
+                { q: "For a child 8 months old with diarrhoea, OPV should:", options: ["Be given but not counted", "Not be given", "Be given and counted", "Delayed"], ans: 0 },
+                { q: "Complementary feeding should start at:", options: ["4 months", "6 months", "9 months", "12 months"], ans: 1 },
+                { q: "A child with very low weight for age and no other signs is classified as:", options: ["Green", "Yellow (ANAEMIA OR VERY LOW WEIGHT)", "Pink", "No classification"], ans: 1 },
+                { q: "Which is a contraindication to DPT?", options: ["Mild fever", "Malnutrition", "Convulsions or shock within 3 days of previous dose", "Cough"], ans: 2 },
+                { q: "Frequency of breastfeeding for a young infant (<4 months) should be:", options: ["4 times/day", "6 times/day", "8 or more times/day", "2 times/day"], ans: 2 },
+                { q: "A child who is exclusively breastfed does not need:", options: ["Extra water", "Vitamin A", "Immunizations", "Iron"], ans: 0 },
+                { q: "Feeding during illness: the child should be:", options: ["Given only fluids", "Given less food", "Offered favourite nutritious foods frequently", "Stopped from eating"], ans: 2 }
+            ],
+            phn: [
+                { q: "A child with chest indrawing and no danger sign should be:", options: ["Given ORS", "Referred urgently", "Sent home with antibiotics", "Given Vitamin A"], ans: 1 },
+                { q: "Pre-referral treatment for severe pneumonia includes:", options: ["First dose appropriate antibiotic", "ORS", "Zinc", "Iron"], ans: 0 },
+                { q: "For a child with very severe febrile disease, give:", options: ["Quinine and first dose antibiotic", "Only paracetamol", "Only ORS", "No treatment"], ans: 0 },
+                { q: "How to treat eye infection with tetracycline?", options: ["Apply inside lower lid (size of rice grain) 3x/day", "Put drops on closed eye", "Rub on eyelid", "Give orally"], ans: 0 },
+                { q: "Follow-up for dysentery after starting antibiotic:", options: ["2 days", "5 days", "7 days", "14 days"], ans: 0 },
+                { q: "When to advise mother to return immediately?", options: ["Child not able to drink", "Fever", "Fast breathing", "All of the above"], ans: 3 },
+                { q: "Plan A (home treatment for no dehydration) includes:", options: ["IV fluids", "ORS + continued feeding + return if danger signs", "Only breastmilk", "No fluids"], ans: 1 },
+                { q: "A child with very low weight for age and feeding problem should return for follow-up in:", options: ["2 days", "5 days", "14 days", "30 days"], ans: 1 },
+                { q: "Intramuscular antibiotics for a child who cannot drink are given:", options: ["After referral", "Before referral as urgent pre-referral", "Only at hospital", "Never"], ans: 1 },
+                { q: "When a child with measles has mouth ulcers, treat with:", options: ["Tetracycline eye ointment", "Gentian violet (half-strength)", "ORS", "Paracetamol"], ans: 1 }
+            ],
+            followup: [
+                { q: "A child with PNEUMONIA should return for follow-up in:", options: ["2 days", "5 days", "7 days", "14 days"], ans: 0 },
+                { q: "If a child with persistent diarrhoea returns after 5 days and diarrhoea has not stopped, you should:", options: ["Give more ORS", "Refer to hospital", "Give second antibiotic", "Send home"], ans: 1 },
+                { q: "For a child with fever – malaria unlikely who still has fever after 2 days, the next action is:", options: ["Treat with antimalarial", "Full reassessment and treat cause", "Give more paracetamol", "Discharge"], ans: 1 },
+                { q: "A child with acute ear infection who still has discharge after 5 days of antibiotic should:", options: ["Stop antibiotics", "Treat with 5 more days of same antibiotic", "Change to second-line antibiotic", "Refer urgently"], ans: 1 },
+                { q: "Feeding problem follow-up is scheduled in:", options: ["2 days", "5 days", "14 days", "30 days"], ans: 1 },
+                { q: "A child with pallor returns after 14 days; you should:", options: ["Give more iron for 14 more days", "Stop iron", "Refer to hospital", "Give vitamin A"], ans: 0 },
+                { q: "If a child with very low weight for age returns after 30 days and is still very low weight, you should:", options: ["Counsel again and reweigh in 1 month", "Refer immediately", "Stop follow-up", "Give high calorie supplements"], ans: 0 },
+                { q: "A child with mastoiditis at follow-up (already on antibiotic) should be:", options: ["Continue same antibiotic", "Referred urgently", "Switch to oral antibiotic", "Discharge"], ans: 1 },
+                { q: "When should you refer a child who comes for follow-up for any condition?", options: ["If child is worse or not improving on second-line drug", "Only if new danger signs appear", "After 2 weeks", "Never"], ans: 0 },
+                { q: "A child with severe pneumonia on follow-up who now has chest indrawing and general danger sign should be:", options: ["Referred urgently after giving second-line antibiotic", "Given more ORS", "Switched to oral antibiotics", "Observed for 24 hours"], ans: 0 }
+            ]
         };
 
-        // Build final quiz (50 items)
-        let finalQ = [];
-        for (let sec of ['overview','danger','classification','cough','diarrhea','fever','ear','malnutrition','phn']) {
-            finalQ = finalQ.concat(quizzes[sec].questions.slice(0,6));
+        // Build quizzes with 10 each
+        const quizzes = {};
+        for (let sec of ['overview','cough','diarrhea','fever','ear','malnutrition','younginfant','immunization','phn','followup']) {
+            quizzes[sec] = { title: `IMCI: ${sec.toUpperCase()} (10 items)`, next: getNextSection(sec), questions: questionBank[sec] };
         }
-        while(finalQ.length < 50) finalQ.push({ q: "What is the fast breathing threshold for a 2-year-old child?", options: ["≥30/min", "≥40/min", "≥50/min", "≥60/min"], ans: 1 });
-        quizzes['final_quiz'] = { title: 'IMCI Final 50‑Item Exam', next: null, questions: finalQ };
+        function getNextSection(sec) {
+            const order = ['overview','cough','diarrhea','fever','ear','malnutrition','younginfant','immunization','phn','followup','mnemonics'];
+            let idx = order.indexOf(sec);
+            return (idx !== -1 && idx+1 < order.length) ? order[idx+1] : 'mnemonics';
+        }
+        // Final 50 items (take 5 from each section)
+        let finalQuestions = [];
+        for (let sec of ['overview','cough','diarrhea','fever','ear','malnutrition','younginfant','immunization','phn','followup']) {
+            finalQuestions = finalQuestions.concat(questionBank[sec].slice(0,5));
+        }
+        while(finalQuestions.length < 50) finalQuestions.push({ q: "Fast breathing threshold for a 2-year-old child?", options: ["≥30/min", "≥40/min", "≥50/min", "≥60/min"], ans: 1 });
+        quizzes['final_quiz'] = { title: 'IMCI Final 50‑Item Exam', next: null, questions: finalQuestions.slice(0,50) };
 
-        // ---------------------- State management --------------------------
+        // Lock/unlock logic
         let unlockedSections = ['home'];
         function unlockFirstSection() { if(!unlockedSections.includes('overview')) { unlockedSections.push('overview'); updateSidebarUI(); } showSection('overview'); }
         function showSection(sectionId) {
-            if (!unlockedSections.includes(sectionId) && sectionId !== 'home') { alert("Please pass the Active Recall Quiz at the bottom of the previous section to unlock this content."); return; }
+            if (!unlockedSections.includes(sectionId) && sectionId !== 'home') { alert("Please pass the quiz at the bottom of the previous section to unlock this content."); return; }
             document.querySelectorAll('.content-section').forEach(el => el.classList.add('hidden'));
             document.getElementById(sectionId)?.classList.remove('hidden');
             document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('bg-slate-100','text-slate-800','border-r-4','border-slate-800'); btn.classList.add('text-slate-600'); });
             const activeBtn = document.getElementById('btn-'+sectionId);
-            if(activeBtn) { activeBtn.classList.remove('text-slate-600'); activeBtn.classList.add('bg-slate-100','text-slate-800','border-r-4','border-slate-800'); }
+            if(activeBtn) activeBtn.classList.add('bg-slate-100','text-slate-800','border-r-4','border-slate-800');
             if(window.innerWidth < 768) document.getElementById('sidebar').classList.add('hidden');
             document.querySelector('main').scrollTop = 0;
         }
         function updateSidebarUI() {
-            const sections = ['home','overview','danger','classification','cough','diarrhea','fever','ear','malnutrition','phn','mnemonics','final_quiz_sec'];
+            const sections = ['home','overview','cough','diarrhea','fever','ear','malnutrition','younginfant','immunization','phn','followup','mnemonics','final_quiz_sec'];
             sections.forEach(sec => {
                 const btn = document.getElementById('btn-'+sec);
                 if(!btn) return;
@@ -388,9 +485,7 @@
             const container = document.getElementById('quiz-questions-container');
             container.innerHTML = '';
             qd.questions.forEach((q, idx) => {
-                let html = `<div class="bg-slate-50 p-4 rounded-xl border mb-4" id="quiz-q-${idx}">
-                    <p class="font-bold mb-3">${idx+1}. ${q.q}</p>
-                    <div class="space-y-2" data-qidx="${idx}">`;
+                let html = `<div class="bg-slate-50 p-4 rounded-xl border mb-4"><p class="font-bold mb-3">${idx+1}. ${q.q}</p><div class="space-y-2">`;
                 q.options.forEach((opt, oi) => {
                     html += `<label class="flex items-center space-x-3 p-2 rounded-lg hover:bg-white cursor-pointer">
                         <input type="radio" name="q${idx}" value="${oi}" class="form-radio text-sky-600">
@@ -417,15 +512,10 @@
                 if(feedbackDiv) {
                     feedbackDiv.classList.remove('hidden');
                     const correctAnswerText = qd.questions[i].options[qd.questions[i].ans];
-                    if(isCorrect) {
-                        feedbackDiv.innerHTML = `<span class="text-green-700"><i class="fa-solid fa-check-circle mr-1"></i> Correct!</span>`;
-                        feedbackDiv.parentElement?.classList.add('quiz-feedback-correct');
-                        feedbackDiv.parentElement?.classList.remove('quiz-feedback-wrong');
-                    } else {
+                    if(isCorrect) feedbackDiv.innerHTML = `<span class="text-green-700">✅ Correct!</span>`;
+                    else {
                         const selectedText = selected ? qd.questions[i].options[parseInt(selected.value)] : "No answer";
-                        feedbackDiv.innerHTML = `<span class="text-red-700"><i class="fa-solid fa-times-circle mr-1"></i> Incorrect. Correct: <strong>${correctAnswerText}</strong>. Your answer: ${selectedText}</span>`;
-                        feedbackDiv.parentElement?.classList.add('quiz-feedback-wrong');
-                        feedbackDiv.parentElement?.classList.remove('quiz-feedback-correct');
+                        feedbackDiv.innerHTML = `<span class="text-red-700">❌ Incorrect. Correct: <strong>${correctAnswerText}</strong>. Your answer: ${selectedText}</span>`;
                     }
                 }
             }
@@ -436,7 +526,7 @@
             resultDiv.classList.remove('hidden');
             if(percent >= 75) {
                 if(currentQuiz === 'final_quiz') {
-                    resultDiv.innerHTML = `<div class="text-amber-500 text-6xl mb-4 text-center">🏆</div><h3 class="text-2xl font-black text-center">Excellent!</h3><p class="text-center">Score ${score}/${qd.questions.length} (${percent}%)</p><p class="mt-2 text-center text-green-700">You mastered IMCI!</p><button onclick="closeQuiz()" class="mt-4 w-full bg-slate-800 text-white py-2 rounded-lg">Close</button>`;
+                    resultDiv.innerHTML = `<div class="text-amber-500 text-6xl mb-4 text-center">🏆</div><h3 class="text-2xl font-black text-center">Excellent!</h3><p class="text-center">Score ${score}/${qd.questions.length} (${percent}%)</p><p class="text-center text-green-700">You mastered IMCI!</p><button onclick="closeQuiz()" class="mt-4 w-full bg-slate-800 text-white py-2 rounded-lg">Close</button>`;
                     return;
                 }
                 if(qd.next && !unlockedSections.includes(qd.next)) { unlockedSections.push(qd.next); if(qd.next === 'mnemonics') unlockedSections.push('final_quiz_sec'); updateSidebarUI(); }
@@ -447,11 +537,12 @@
         }
         function toggleRecallMode() {
             const active = !document.body.classList.contains('recall-mode');
-            const toggle = document.getElementById('recall-toggle'), knob = document.getElementById('recall-knob');
-            if(active) { document.body.classList.add('recall-mode'); toggle.classList.add('bg-slate-600'); knob.classList.add('translate-x-6'); }
-            else { document.body.classList.remove('recall-mode'); toggle.classList.remove('bg-slate-600'); knob.classList.remove('translate-x-6'); }
+            const toggleDiv = document.getElementById('recall-toggle');
+            const knob = document.getElementById('recall-knob');
+            if(active) { document.body.classList.add('recall-mode'); toggleDiv.classList.add('bg-slate-600'); knob.classList.add('translate-x-6'); }
+            else { document.body.classList.remove('recall-mode'); toggleDiv.classList.remove('bg-slate-600'); knob.classList.remove('translate-x-6'); }
         }
-        function toggleMobileMenu() { const s=document.getElementById('sidebar'); if(s.classList.contains('hidden')) s.classList.remove('hidden','flex','absolute','h-full','z-50'); else s.classList.add('hidden'); }
+        function toggleMobileMenu() { const s=document.getElementById('sidebar'); if(s.classList.contains('hidden')) s.classList.remove('hidden'); else s.classList.add('hidden'); }
         document.addEventListener('DOMContentLoaded', () => { updateSidebarUI(); document.querySelectorAll('.reveal-text').forEach(el => el.addEventListener('click', function(){ if(document.body.classList.contains('recall-mode')) this.classList.toggle('revealed'); })); });
     </script>
 </body>
